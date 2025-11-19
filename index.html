@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Emotion Tracker – AI Diary</title>
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e9edf5">
+
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <!-- Chart.js -->
@@ -121,6 +125,7 @@
       padding: 18px 20px 20px;
       position: relative;
       overflow: hidden;
+      margin-bottom: 16px;
     }
 
     .card h2 {
@@ -455,9 +460,30 @@
             <div class="result-meta">
               Last updated at {{ lastTime }}
             </div>
+            <div class="result-meta" v-if="result.ehi !== undefined">
+              Emotional Health Index (EHI):
+              <strong>{{ result.ehi }}</strong> / 100
+            </div>
           </div>
         </div>
 
+        <!-- EHI 条 -->
+        <div class="probs-list" v-if="result.ehi !== undefined">
+          <div class="prob-row">
+            <div class="prob-header">
+              <span class="prob-label">EHI</span>
+              <span>{{ result.ehi }}</span>
+            </div>
+            <div class="prob-bar-wrap">
+              <div
+                class="prob-bar-fill"
+                :style="ehiStyle"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 多情绪概率条 -->
         <div class="probs-list" v-if="probs && probs.length">
           <div class="prob-row" v-for="(p, idx) in probs" :key="idx">
             <div class="prob-header">
@@ -476,12 +502,12 @@
       </div>
     </div>
 
-    <!-- 右侧：历史 + 趋势 -->
+    <!-- 右侧：历史 + 图表 -->
     <div>
       <div class="card" v-if="history.length">
-        <h2>3. Local history (this session)</h2>
+        <h2>3. Local history (this device)</h2>
         <div class="card-caption">
-          Stored only in this browser tab for demo. Refreshing clears the list.
+          Stored only in this browser (localStorage). Refreshing or closing tab keeps the history.
         </div>
         <div class="history-list">
           <div
@@ -512,9 +538,25 @@
       <div class="card" v-if="history.length">
         <h2>4. Confidence trend</h2>
         <div class="card-caption">
-          Confidence of the predicted primary emotion across your recent entries.
+          Confidence of the predicted primary emotion across your entries.
         </div>
         <canvas id="historyChart" height="140"></canvas>
+      </div>
+
+      <div class="card" v-if="history.length">
+        <h2>5. Emotion counts</h2>
+        <div class="card-caption">
+          How many times each emotion has been your primary prediction.
+        </div>
+        <canvas id="countChart" height="160"></canvas>
+      </div>
+
+      <div class="card" v-if="probs && probs.length">
+        <h2>6. Emotion profile (radar)</h2>
+        <div class="card-caption">
+          Overall distribution of emotions for your latest entry.
+        </div>
+        <canvas id="radarChart" height="180"></canvas>
       </div>
     </div>
   </section>
@@ -538,7 +580,9 @@ createApp({
       history: [],
       probs: [],
       chart: null,
-      // 替换成你当前的 Cloudflare Tunnel URL
+      countChart: null,
+      radarChart: null,
+      // 这里写你的 Cloudflare Tunnel 地址（换新的只改这一行）
       apiUrl: "https://able-routing-hash-direction.trycloudflare.com/predict",
     }
   },
@@ -554,6 +598,24 @@ createApp({
       if (label.includes("surprise")) return "😮"
       if (label.includes("neutral")) return "😐"
       return "🌀"
+    },
+    ehiStyle() {
+      if (!this.result || this.result.ehi === undefined) {
+        return { width: "0%" }
+      }
+      const ehi = this.result.ehi
+      let bg
+      if (ehi >= 60) {
+        bg = "linear-gradient(90deg,#55efc4,#00b894)" // 偏健康
+      } else if (ehi <= 40) {
+        bg = "linear-gradient(90deg,#ff7675,#d63031)" // 偏危险
+      } else {
+        bg = "linear-gradient(90deg,#ffeaa7,#fdcb6e)" // 中间状态
+      }
+      return {
+        width: ehi + "%",
+        background: bg
+      }
     }
   },
   methods: {
@@ -580,16 +642,12 @@ createApp({
         }
 
         const data = await res.json()
-        // 兼容：如果后端以后扩展为返回 probs（完整分布），优先使用
-        // 假设格式：{ label_name, score, probs: [{label, score}, ...] }
         this.result = data
         this.lastTime = new Date().toLocaleTimeString()
 
         if (Array.isArray(data.probs) && data.probs.length) {
-          // 按概率从大到小排
           this.probs = [...data.probs].sort((a, b) => b.score - a.score)
         } else {
-          // 当前后端只有一个标签 + score，用单条 fallback
           this.probs = [
             { label: data.label_name || "primary", score: data.score || 0 }
           ]
@@ -604,6 +662,8 @@ createApp({
         })
 
         this.updateChart()
+        this.updateCountChart()
+        this.updateRadar()
       } catch (e) {
         console.error(e)
         this.error =
@@ -644,6 +704,71 @@ createApp({
         }
       })
     },
+    updateCountChart() {
+      const ctx = document.getElementById("countChart").getContext("2d")
+      const counts = {}
+      this.history.forEach(h => {
+        const lbl = (h.label_name || "unknown").toLowerCase()
+        counts[lbl] = (counts[lbl] || 0) + 1
+      })
+
+      const labels = Object.keys(counts)
+      const values = labels.map(l => counts[l])
+
+      if (this.countChart) {
+        this.countChart.destroy()
+      }
+
+      this.countChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Count",
+            data: values,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      })
+    },
+    updateRadar() {
+      const ctx = document.getElementById("radarChart").getContext("2d")
+      const labels = this.probs.map(p => p.label)
+      const scores = this.probs.map(p => (p.score || 0) * 100)
+
+      if (this.radarChart) {
+        this.radarChart.destroy()
+      }
+
+      this.radarChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Emotion distribution (%)",
+            data: scores,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      })
+    },
     barGradient(label) {
       const l = (label || "").toLowerCase()
       if (l.includes("joy") || l.includes("happy")) {
@@ -669,8 +794,42 @@ createApp({
       }
       return "linear-gradient(90deg,#dfe6e9,#636e72)"
     }
+  },
+  mounted() {
+    // 读取本地历史
+    const saved = localStorage.getItem("emotion_history_v1")
+    if (saved) {
+      try {
+        this.history = JSON.parse(saved)
+        if (this.history.length) {
+          this.updateChart()
+          this.updateCountChart()
+        }
+      } catch (e) {
+        console.error("Failed to parse saved history", e)
+      }
+    }
+  },
+  watch: {
+    history: {
+      handler(newVal) {
+        localStorage.setItem("emotion_history_v1", JSON.stringify(newVal))
+      },
+      deep: true
+    }
   }
 }).mount("#app")
+</script>
+
+<!-- 注册 Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("sw.js")
+      .catch(err => console.log("SW registration failed:", err))
+  })
+}
 </script>
 </body>
 </html>
