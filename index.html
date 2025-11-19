@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emotion Tracker – AI Diary</title>
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e9edf5">
+
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg: #e9edf5;
+      --card: #f5f7fc;
+      --shadow-light: #ffffff;
+      --shadow-dark: #c5cedf;
+      --accent: #5b8def;
+      --accent-soft: rgba(91, 141, 239, 0.18);
+      --text-main: #222c3c;
+      --text-sub: #7b8497;
+      --danger: #e57373;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --glass: rgba(255, 255, 255, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(circle at top left, #fdfbff, #dde3f0);
+      color: var(--text-main);
+    }
+
+    .app-wrap {
+      max-width: 960px;
+      margin: 36px auto 60px;
+      padding: 0 18px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .pill {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 25px rgba(180, 193, 216, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-sub);
+    }
+
+    .pill strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 22px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 880px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      box-shadow:
+        12px 12px 24px var(--shadow-dark),
+        -10px -10px 24px var(--shadow-light);
+      padding: 18px 20px 20px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .card-caption {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: none;
+      outline: none;
+      resize: vertical;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text-main);
+      background: var(--card);
+      box-shadow:
+        inset 6px 6px 14px rgba(188, 196, 213, 0.7),
+        inset -6px -6px 14px rgba(255, 255, 255, 0.9);
+    }
+
+    textarea::placeholder {
+      color: #b0b7c7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .btn-glass {
+      position: relative;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      color: #1f2933;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: radial-gradient(circle at top left,
+        rgba(255, 255, 255, 0.92),
+        rgba(223, 230, 248, 0.95));
+      box-shadow:
+        0 12px 26px rgba(158, 173, 209, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(18px);
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        background 0.12s ease;
+    }
+
+    .btn-glass span.icon {
+      font-size: 16px;
+    }
+
+    .btn-glass:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 18px 34px rgba(140, 162, 210, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-glass:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow:
+        0 8px 18px rgba(140, 162, 210, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-glass:disabled {
+      cursor: default;
+      opacity: 0.6;
+      box-shadow:
+        0 6px 14px rgba(171, 181, 202, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .tiny-hint {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .error {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--danger);
+    }
+
+    .result-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+
+    .result-emoji {
+      font-size: 32px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -5px -5px 12px var(--shadow-light);
+      background: var(--card);
+    }
+
+    .result-text-main {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .result-text-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .result-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* multi-prob bars */
+    .probs-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .prob-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .prob-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .prob-label {
+      text-transform: capitalize;
+    }
+
+    .prob-bar-wrap {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #dde3f0;
+      overflow: hidden;
+      box-shadow:
+        inset 2px 2px 4px rgba(176, 188, 210, 0.8),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+    }
+
+    .prob-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+      background: linear-gradient(90deg,
+        rgba(91, 141, 239, 0.1),
+        rgba(91, 141, 239, 0.9));
+    }
+
+    .history-list {
+      margin-top: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      border-radius: var(--radius-md);
+      padding: 9px 11px;
+      background: var(--card);
+      box-shadow:
+        6px 6px 12px rgba(186, 195, 213, 0.7),
+        -6px -6px 12px rgba(255, 255, 255, 0.9);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .history-left {
+      max-width: 65%;
+    }
+
+    .history-text {
+      color: var(--text-main);
+    }
+
+    .history-time {
+      color: var(--text-sub);
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .history-right {
+      text-align: right;
+      min-width: 110px;
+    }
+
+    .history-label {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .history-score {
+      color: var(--text-sub);
+      font-size: 11px;
+    }
+
+    canvas {
+      margin-top: 8px;
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow:
+        inset 4px 4px 10px rgba(184, 194, 211, 0.9),
+        inset -4px -4px 10px rgba(255, 255, 255, 1);
+      padding: 6px;
+    }
+
+    .footer {
+      margin-top: 26px;
+      font-size: 11px;
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    .footer span.brand {
+      font-weight: 600;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="app-wrap">
+  <header class="header">
+    <div>
+      <div class="title">
+        Emotion Tracker
+        <span class="title-badge">AI Diary · Prototype</span>
+      </div>
+      <div class="subtitle">
+        Type how you feel. The model predicts your emotion and keeps a local trend of your mood.
+      </div>
+    </div>
+    <div class="pill">
+      <span>Model: <strong>DistilBERT Emotion</strong></span>
+    </div>
+  </header>
+
+  <section class="grid">
+    <!-- 左侧：输入 + 主结果 -->
+    <div>
+      <div class="card">
+        <h2>1. Write how you feel</h2>
+        <div class="card-caption">
+          Example: <em>I feel a bit lost but also strangely calm today.</em>
+        </div>
+        <textarea
+          v-model="text"
+          placeholder="Type a short reflection or sentence about your mood..."
+        ></textarea>
+
+        <div class="actions">
+          <button
+            class="btn-glass"
+            @click="analyze"
+            :disabled="loading || !text.trim()"
+          >
+            <span class="icon">✨</span>
+            <span v-if="!loading">Analyze Emotion</span>
+            <span v-else>Thinking...</span>
+          </button>
+          <div class="tiny-hint">
+            All requests go through an anonymized API. No texts are stored on a server.
+          </div>
+        </div>
+
+        <div class="error" v-if="error">
+          {{ error }}
+        </div>
+      </div>
+
+      <div class="card" v-if="result">
+        <h2>2. Primary emotion</h2>
+        <div class="card-caption">
+          Dominant emotion detected from your text. Scores are model confidence, not absolute truth.
+        </div>
+
+        <div class="result-main">
+          <div class="result-emoji">
+            {{ primaryEmoji }}
+          </div>
+          <div>
+            <div class="result-text-main">
+              {{ result.label_name }}
+            </div>
+            <div class="result-text-sub">
+              Confidence:
+              <strong>{{ (result.score * 100).toFixed(1) }}%</strong>
+            </div>
+            <div class="result-meta">
+              Last updated at {{ lastTime }}
+            </div>
+            <div class="result-meta" v-if="result.ehi !== undefined">
+              Emotional Health Index (EHI):
+              <strong>{{ result.ehi }}</strong> / 100
+            </div>
+          </div>
+        </div>
+
+        <!-- EHI 条 -->
+        <div class="probs-list" v-if="result.ehi !== undefined">
+          <div class="prob-row">
+            <div class="prob-header">
+              <span class="prob-label">EHI</span>
+              <span>{{ result.ehi }}</span>
+            </div>
+            <div class="prob-bar-wrap">
+              <div
+                class="prob-bar-fill"
+                :style="ehiStyle"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 多情绪概率条 -->
+        <div class="probs-list" v-if="probs && probs.length">
+          <div class="prob-row" v-for="(p, idx) in probs" :key="idx">
+            <div class="prob-header">
+              <span class="prob-label">{{ p.label }}</span>
+              <span>{{ (p.score * 100).toFixed(1) }}%</span>
+            </div>
+            <div class="prob-bar-wrap">
+              <div
+                class="prob-bar-fill"
+                :style="{ width: (p.score * 100).toFixed(1) + '%',
+                          background: barGradient(p.label) }"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：历史 + 图表 -->
+    <div>
+      <div class="card" v-if="history.length">
+        <h2>3. Local history (this device)</h2>
+        <div class="card-caption">
+          Stored only in this browser (localStorage). Refreshing or closing tab keeps the history.
+        </div>
+        <div class="history-list">
+          <div
+            class="history-item"
+            v-for="(item, idx) in history"
+            :key="idx"
+          >
+            <div class="history-left">
+              <div class="history-text">
+                #{{ idx + 1 }} · {{ item.text }}
+              </div>
+              <div class="history-time">
+                {{ item.time }}
+              </div>
+            </div>
+            <div class="history-right">
+              <div class="history-label">
+                {{ item.label_name }}
+              </div>
+              <div class="history-score">
+                {{ (item.score * 100).toFixed(1) }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" v-if="history.length">
+        <h2>4. Confidence trend</h2>
+        <div class="card-caption">
+          Confidence of the predicted primary emotion across your entries.
+        </div>
+        <canvas id="historyChart" height="140"></canvas>
+      </div>
+
+      <div class="card" v-if="history.length">
+        <h2>5. Emotion counts</h2>
+        <div class="card-caption">
+          How many times each emotion has been your primary prediction.
+        </div>
+        <canvas id="countChart" height="160"></canvas>
+      </div>
+
+      <div class="card" v-if="probs && probs.length">
+        <h2>6. Emotion profile (radar)</h2>
+        <div class="card-caption">
+          Overall distribution of emotions for your latest entry.
+        </div>
+        <canvas id="radarChart" height="180"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Built for <span class="brand">Emotion Tracking Capstone</span> · Frontend on GitHub Pages, model served via Cloudflare Tunnel.
+  </footer>
+</div>
+
+<script>
+const { createApp } = Vue
+
+createApp({
+  data() {
+    return {
+      text: "",
+      loading: false,
+      error: "",
+      result: null,
+      lastTime: "",
+      history: [],
+      probs: [],
+      chart: null,
+      countChart: null,
+      radarChart: null,
+      // 这里写你的 Cloudflare Tunnel 地址（换新的只改这一行）
+      apiUrl: "https://inspection-hour-rainbow-request.trycloudflare.com/predict",
+    }
+  },
+  computed: {
+    primaryEmoji() {
+      if (!this.result) return "🤍"
+      const label = (this.result.label_name || "").toLowerCase()
+      if (label.includes("joy") || label.includes("happy")) return "😊"
+      if (label.includes("sad")) return "😢"
+      if (label.includes("anger") || label.includes("angry")) return "😡"
+      if (label.includes("fear") || label.includes("anx")) return "😨"
+      if (label.includes("love")) return "❤️"
+      if (label.includes("surprise")) return "😮"
+      if (label.includes("neutral")) return "😐"
+      return "🌀"
+    },
+    ehiStyle() {
+      if (!this.result || this.result.ehi === undefined) {
+        return { width: "0%" }
+      }
+      const ehi = this.result.ehi
+      let bg
+      if (ehi >= 60) {
+        bg = "linear-gradient(90deg,#55efc4,#00b894)" // 偏健康
+      } else if (ehi <= 40) {
+        bg = "linear-gradient(90deg,#ff7675,#d63031)" // 偏危险
+      } else {
+        bg = "linear-gradient(90deg,#ffeaa7,#fdcb6e)" // 中间状态
+      }
+      return {
+        width: ehi + "%",
+        background: bg
+      }
+    }
+  },
+  methods: {
+    async analyze() {
+      this.error = ""
+      const content = this.text.trim()
+      if (!content) {
+        this.error = "Please type something before analyzing."
+        return
+      }
+
+      this.loading = true
+      try {
+        const res = await fetch(this.apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: content })
+        })
+
+        if (!res.ok) {
+          this.error = "Backend returned status: " + res.status
+          this.loading = false
+          return
+        }
+
+        const data = await res.json()
+        this.result = data
+        this.lastTime = new Date().toLocaleTimeString()
+
+        if (Array.isArray(data.probs) && data.probs.length) {
+          this.probs = [...data.probs].sort((a, b) => b.score - a.score)
+        } else {
+          this.probs = [
+            { label: data.label_name || "primary", score: data.score || 0 }
+          ]
+        }
+
+        this.history.push({
+          time: this.lastTime,
+          text: content,
+          label_id: data.label_id,
+          label_name: data.label_name,
+          score: data.score
+        })
+
+        this.updateChart()
+        this.updateCountChart()
+        this.updateRadar()
+      } catch (e) {
+        console.error(e)
+        this.error =
+          "Request failed. Check if the backend / Cloudflare Tunnel is running."
+      } finally {
+        this.loading = false
+      }
+    },
+    updateChart() {
+      const ctx = document.getElementById("historyChart").getContext("2d")
+      const labels = this.history.map(h => h.time)
+      const scores = this.history.map(h => (h.score || 0) * 100)
+
+      if (this.chart) {
+        this.chart.destroy()
+      }
+
+      this.chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Primary emotion confidence (%)",
+              data: scores,
+              tension: 0.35,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      })
+    },
+    updateCountChart() {
+      const ctx = document.getElementById("countChart").getContext("2d")
+      const counts = {}
+      this.history.forEach(h => {
+        const lbl = (h.label_name || "unknown").toLowerCase()
+        counts[lbl] = (counts[lbl] || 0) + 1
+      })
+
+      const labels = Object.keys(counts)
+      const values = labels.map(l => counts[l])
+
+      if (this.countChart) {
+        this.countChart.destroy()
+      }
+
+      this.countChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Count",
+            data: values,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      })
+    },
+    updateRadar() {
+      const ctx = document.getElementById("radarChart").getContext("2d")
+      const labels = this.probs.map(p => p.label)
+      const scores = this.probs.map(p => (p.score || 0) * 100)
+
+      if (this.radarChart) {
+        this.radarChart.destroy()
+      }
+
+      this.radarChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Emotion distribution (%)",
+            data: scores,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      })
+    },
+    barGradient(label) {
+      const l = (label || "").toLowerCase()
+      if (l.includes("joy") || l.includes("happy")) {
+        return "linear-gradient(90deg,#ffeaa7,#fdcb6e)"
+      }
+      if (l.includes("sad")) {
+        return "linear-gradient(90deg,#74b9ff,#0984e3)"
+      }
+      if (l.includes("anger") || l.includes("angry")) {
+        return "linear-gradient(90deg,#ff7675,#d63031)"
+      }
+      if (l.includes("fear") || l.includes("anx")) {
+        return "linear-gradient(90deg,#a29bfe,#6c5ce7)"
+      }
+      if (l.includes("love")) {
+        return "linear-gradient(90deg,#ff9ff3,#f368e0)"
+      }
+      if (l.includes("surprise")) {
+        return "linear-gradient(90deg,#55efc4,#00b894)"
+      }
+      if (l.includes("neutral")) {
+        return "linear-gradient(90deg,#b2bec3,#636e72)"
+      }
+      return "linear-gradient(90deg,#dfe6e9,#636e72)"
+    }
+  },
+  mounted() {
+    // 读取本地历史
+    const saved = localStorage.getItem("emotion_history_v1")
+    if (saved) {
+      try {
+        this.history = JSON.parse(saved)
+        if (this.history.length) {
+          this.updateChart()
+          this.updateCountChart()
+        }
+      } catch (e) {
+        console.error("Failed to parse saved history", e)
+      }
+    }
+  },
+  watch: {
+    history: {
+      handler(newVal) {
+        localStorage.setItem("emotion_history_v1", JSON.stringify(newVal))
+      },
+      deep: true
+    }
+  }
+}).mount("#app")
+</script>
+
+<!-- 注册 Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("sw.js")
+      .catch(err => console.log("SW registration failed:", err))
+  })
+}
+</script>
+</body>
+</html>
