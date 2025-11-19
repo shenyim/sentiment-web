@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emotion Tracker Demo</title>
+  <!-- Vue3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 16px 40px;
+      background: linear-gradient(135deg, #0f172a, #020617);
+      color: #e5e7eb;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    h2 {
+      margin-top: 32px;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      margin-top: 16px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      font-size: 14px;
+      padding: 8px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      resize: vertical;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+    button:hover:not(:disabled) {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59,130,246,0.6);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .result {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: rgba(15,23,42,0.8);
+    }
+    .label {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .score {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+    .meta {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .error {
+      color: #fca5a5;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .history-list {
+      max-height: 600px;   /* 放大高度，能显示更多条 */
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    .history-text {
+      max-width: 60%;
+      color: #e5e7eb;
+    }
+    .history-text small {
+      color: #9ca3af;
+      display: block;
+    }
+    .history-emotion {
+      text-align: right;
+      min-width: 120px;
+      color: #a5b4fc;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.6);
+      margin-left: 4px;
+    }
+    canvas {
+      background: rgba(15,23,42,0.9);
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid rgba(55,65,81,0.8);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Emotion Tracker Demo</h1>
+    <p style="text-align:center; font-size: 13px; color:#9ca3af;">
+      Local AI · No Cloud · Privacy First
+    </p>
+
+    <!-- 输入 + 当前结果 -->
+    <div class="card">
+      <h2>1. 输入一句话</h2>
+      <p style="font-size: 13px; color:#9ca3af;">（目前先用英文句子测试，比如：I feel very stressed today.）</p>
+      <textarea v-model="text" placeholder="Type how you feel today..."></textarea>
+
+      <div>
+        <button @click="analyze" :disabled="loading || !text.trim()">
+          {{ loading ? "分析中..." : "分析情绪" }}
+        </button>
+      </div>
+
+      <p class="error" v-if="error">{{ error }}</p>
+
+      <div class="result" v-if="result">
+        <div class="label">
+          Emotion: {{ result.label_name }}
+          <span class="tag">id = {{ result.label_id }}</span>
+        </div>
+        <div class="score">
+          Confidence: {{ (result.score * 100).toFixed(1) }}%
+        </div>
+        <div class="meta">
+          Last updated at: {{ lastTime }}
+        </div>
+      </div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div class="card" v-if="history.length > 0">
+      <h2>2. 历史记录（本地）</h2>
+      <p style="font-size: 13px; color:#9ca3af;">仅保存在浏览器内存，不上传到任何服务器。</p>
+      <div class="history-list">
+        <div class="history-item" v-for="(item, idx) in history" :key="idx">
+          <div class="history-text">
+            <div>#{{ idx + 1 }} · {{ item.time }}</div>
+            <small>{{ item.text }}</small>
+          </div>
+          <div class="history-emotion">
+            <div>{{ item.label_name }} ({{ (item.score * 100).toFixed(1) }}%)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart.js 趋势图 -->
+    <div class="card" v-if="history.length > 0">
+      <h2>3. 情绪趋势（按时间）</h2>
+      <canvas id="historyChart" height="140"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue
+
+    createApp({
+      data() {
+        return {
+          text: "",
+          loading: false,
+          result: null,
+          error: "",
+          lastTime: "",
+          history: [],
+          chart: null
+        }
+      },
+      methods: {
+        async analyze() {
+          // 每次点击先清掉上一次状态
+          this.error = ""
+          this.result = null
+
+          const content = this.text.trim()
+          if (!content) {
+            this.error = "请输入一点内容再分析～"
+            return
+          }
+
+          this.loading = true
+          try {
+            const res = await fetch("https://able-routing-hash-direction.trycloudflare.com/predict", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ text: content })
+            })
+
+            if (!res.ok) {
+              this.error = "后端返回错误状态：" + res.status
+              return
+            }
+
+            const data = await res.json()
+            this.result = data
+            this.lastTime = new Date().toLocaleTimeString()
+
+            // 加入历史记录
+            this.history.push({
+              time: this.lastTime,
+              text: content,
+              label_id: data.label_id,
+              label_name: data.label_name,
+              score: data.score
+            })
+
+            this.updateChart()
+          } catch (e) {
+            console.error(e)
+            this.result = null
+            this.error = "请求失败，可能是后端没跑或者网络问题。"
+          } finally {
+            this.loading = false
+          }
+        },
+        updateChart() {
+          const ctx = document.getElementById("historyChart").getContext("2d")
+          const labels = this.history.map(h => h.time)
+          const scores = this.history.map(h => (h.score * 100))
+
+          // 每次都重建 chart，保证点数 = history.length
+          if (this.chart) {
+            this.chart.destroy()
+          }
+
+          this.chart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [{
+                label: "Emotion confidence (%)",
+                data: scores,
+                tension: 0.3
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100
+                }
+              }
+            }
+          })
+        }
+      }
+    }).mount("#app")
+  </script>
+</body>
+</html>
