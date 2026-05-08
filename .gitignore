@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+env/
+
+# OS/editor files
+.DS_Store
+._*
+.vscode/
+.idea/
+
+# Local secrets and logs
+.env
+*.log
+
+# Build/cache output
+.pytest_cache/
+.mypy_cache/
+.mplconfig/
+dist/
+build/

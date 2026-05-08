@@ -1,0 +1,443 @@
+[
+  {
+    "text": "I feel better and bright today.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been calm, confident, and very aware of these feelings.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel content and excited.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became fine after something good happened.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel grateful, great, and I cannot stop thinking about it.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I feeling better because of everything happening around me.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I looking forward because of everything happening around me.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I feel ashamed and blue today.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been cry, crying, and very aware of these feelings.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel depressed and down.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became drained after something empty happened.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel guilty, heartbroken, and I cannot stop thinking about it.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I feel alone because of everything happening around me.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I feel empty because of everything happening around me.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I feel angry and annoyed today.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been argument, awful, and very aware of these feelings.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel bitter and frustrated.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became furious after something hate happened.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel hostile, irritated, and I cannot stop thinking about it.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I so mad because of everything happening around me.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I fed up because of everything happening around me.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I feel afraid and anxiety today.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been anxious, dread, and very aware of these feelings.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel fear and nervous.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became overwhelmed after something panic happened.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel paranoid, pressure, and I cannot stop thinking about it.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I panic attack because of everything happening around me.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I under pressure because of everything happening around me.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I feel affection and belonging today.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been cared, caring, and very aware of these feelings.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel cherish and close.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became compassion after something connected happened.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel family, friendship, and I cannot stop thinking about it.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I feel supported because of everything happening around me.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I feel loved because of everything happening around me.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I feel abrupt and amazed today.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "Lately I have been astonished, caught, and very aware of these feelings.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "This situation made me feel confused and curious.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "I became different after something shocked happened.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "My journal note says I feel startled, strange, and I cannot stop thinking about it.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "lexicon_template"
+  },
+  {
+    "text": "In today's reflection, I wrote that I did not expect because of everything happening around me.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "In today's reflection, I wrote that I out of nowhere because of everything happening around me.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "phrase_hint"
+  },
+  {
+    "text": "I am happy and excited about my progress.",
+    "primary_label": "joy",
+    "labels": [
+      "joy"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I feel lonely, tired, and empty tonight.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I am furious about how unfair this situation is.",
+    "primary_label": "anger",
+    "labels": [
+      "anger"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I am anxious and stressed about tomorrow's exam.",
+    "primary_label": "fear",
+    "labels": [
+      "fear"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I feel loved and supported by my friends.",
+    "primary_label": "love",
+    "labels": [
+      "love"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I was shocked by the sudden news this morning.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise"
+    ],
+    "source": "seed_example"
+  },
+  {
+    "text": "I felt nervous before class, but after talking to my teammate I felt more hopeful and supported.",
+    "primary_label": "fear",
+    "labels": [
+      "fear",
+      "love",
+      "joy"
+    ],
+    "source": "journal_mixed"
+  },
+  {
+    "text": "I was sad and lonely tonight, although a message from my family made me feel loved.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness",
+      "love"
+    ],
+    "source": "journal_mixed"
+  },
+  {
+    "text": "The feedback made me angry at first, but later I was surprised and a little relieved.",
+    "primary_label": "anger",
+    "labels": [
+      "anger",
+      "surprise",
+      "joy"
+    ],
+    "source": "journal_mixed"
+  },
+  {
+    "text": "I did not expect the result and felt shocked, worried, and unable to relax.",
+    "primary_label": "surprise",
+    "labels": [
+      "surprise",
+      "fear"
+    ],
+    "source": "journal_mixed"
+  },
+  {
+    "text": "I felt grateful, calm, and deeply connected to the people helping me.",
+    "primary_label": "love",
+    "labels": [
+      "love",
+      "joy"
+    ],
+    "source": "journal_mixed"
+  },
+  {
+    "text": "I felt empty and frustrated after the meeting, and the pressure made me anxious too.",
+    "primary_label": "sadness",
+    "labels": [
+      "sadness",
+      "anger",
+      "fear"
+    ],
+    "source": "journal_mixed"
+  }
+]

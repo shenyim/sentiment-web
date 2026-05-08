@@ -1,0 +1,9 @@
+{
+  "name": "Emotion Tracking Support System",
+  "short_name": "EmotionTrack",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5efe5",
+  "theme_color": "#f5efe5",
+  "description": "A privacy-first emotion tracking dashboard for diary-style reflections."
+}

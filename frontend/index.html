@@ -1,0 +1,2655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emotion Tracking Support System</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f3ecdf">
+  <style>
+    :root {
+      --bg: #f3ecdf;
+      --panel: rgba(255, 250, 243, 0.84);
+      --panel-strong: #fffaf3;
+      --text: #2c221b;
+      --muted: #72655b;
+      --line: rgba(95, 74, 59, 0.14);
+      --accent: #b5532f;
+      --accent-soft: rgba(181, 83, 47, 0.12);
+      --teal: #1f7a72;
+      --teal-soft: rgba(31, 122, 114, 0.12);
+      --gold: #d8a144;
+      --danger: #b23a48;
+      --shadow: 0 24px 70px rgba(97, 71, 52, 0.12);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.88), transparent 30%),
+        radial-gradient(circle at 85% 18%, rgba(216,161,68,0.12), transparent 20%),
+        linear-gradient(135deg, #f8f1e7 0%, #efe2d2 42%, #f6f0e6 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0,
+          transparent 90px,
+          rgba(120, 93, 74, 0.02) 90px,
+          rgba(120, 93, 74, 0.02) 91px
+        );
+      opacity: 0.8;
+    }
+
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .shell {
+      width: min(1240px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 52px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 12px 16px;
+      background: rgba(255, 251, 246, 0.56);
+      border: 1px solid rgba(95, 74, 59, 0.08);
+      border-radius: 999px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 28px rgba(97, 71, 52, 0.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.92), transparent 36%),
+        linear-gradient(135deg, #d7894b, #ad4d2b);
+      box-shadow: 0 10px 22px rgba(173, 77, 43, 0.18);
+      display: grid;
+      place-items: center;
+      color: #fff7f0;
+      font-size: 20px;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-copy span,
+    .topbar-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .status-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(95, 74, 59, 0.08);
+      background: rgba(255, 255, 255, 0.68);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 5px rgba(31, 122, 114, 0.08);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(330px, 0.8fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 28px 80px rgba(97, 71, 52, 0.16);
+      border-color: rgba(95, 74, 59, 0.18);
+    }
+
+    .hero-main {
+      padding: 28px 30px 30px;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      animation: riseIn 0.7s ease both;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      top: -90px;
+      right: -85px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(181,83,47,0.18), transparent 72%);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+    }
+
+    .hero-main h1 {
+      font-size: clamp(34px, 4.8vw, 64px);
+      line-height: 0.96;
+      max-width: 11ch;
+      margin-bottom: 14px;
+    }
+
+    .hero-main p {
+      max-width: 54ch;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .hero-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hero-card {
+      border-radius: 20px;
+      padding: 16px 14px;
+      background: rgba(255, 255, 255, 0.52);
+      border: 1px solid rgba(95, 74, 59, 0.08);
+      min-height: 112px;
+    }
+
+    .hero-card .kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .hero-card strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .hero-side {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      animation: riseIn 0.8s ease both;
+    }
+
+    .metric-tile {
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(95, 74, 59, 0.08);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .metric-tile .meta {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .metric-tile strong {
+      font-size: 26px;
+    }
+
+    .metric-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(31,122,114,0.12), rgba(31,122,114,0.26));
+      color: var(--teal);
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 18px;
+    }
+
+    .column {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    [data-reveal] {
+      animation: riseIn 0.8s ease both;
+    }
+
+    [data-reveal="2"] { animation-delay: 0.06s; }
+    [data-reveal="3"] { animation-delay: 0.12s; }
+    [data-reveal="4"] { animation-delay: 0.18s; }
+
+    .card h2 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 210px;
+      resize: vertical;
+      border: 1px solid rgba(95, 74, 59, 0.12);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.76);
+      color: var(--text);
+      padding: 18px 18px 20px;
+      font: inherit;
+      font-size: 17px;
+      line-height: 1.7;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(181, 83, 47, 0.22);
+      box-shadow: 0 0 0 5px rgba(181, 83, 47, 0.06);
+    }
+
+    .input-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      flex-wrap: wrap;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .toolbar-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #ca6d3f, #af4d2d);
+      color: #fff7f0;
+      box-shadow: 0 14px 28px rgba(181, 83, 47, 0.18);
+    }
+
+    .secondary {
+      background: var(--teal-soft);
+      color: var(--teal);
+    }
+
+    .ghost {
+      background: rgba(255,255,255,0.66);
+      color: var(--text);
+      border: 1px solid rgba(95,74,59,0.12);
+    }
+
+    .hint, .error {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .hint { color: var(--muted); }
+    .error { color: var(--danger); }
+
+    .quick-prompts {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .prompt-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(95,74,59,0.12);
+      background: rgba(255,255,255,0.6);
+      color: var(--muted);
+      padding: 9px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .result-top {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .emoji-wrap {
+      width: 110px;
+      height: 110px;
+      border-radius: 32px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.94), transparent 45%),
+        linear-gradient(180deg, rgba(255,255,255,0.78), rgba(238,223,204,0.72));
+      border: 1px solid rgba(95,74,59,0.12);
+      font-size: 50px;
+    }
+
+    .headline {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.66);
+      border: 1px solid rgba(95,74,59,0.1);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .insight-box {
+      border-radius: 20px;
+      padding: 16px;
+      border: 1px solid rgba(95,74,59,0.08);
+      background: rgba(255,255,255,0.56);
+      min-height: 132px;
+    }
+
+    .insight-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    .insight-value {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .insight-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .section-block {
+      margin-top: 18px;
+    }
+
+    .viz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .viz-card {
+      border-radius: 22px;
+      padding: 16px;
+      border: 1px solid rgba(95,74,59,0.08);
+      background: rgba(255,255,255,0.56);
+      min-height: 210px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viz-card h4 {
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .viz-card .mini-note {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+
+    .section-head h3 {
+      font-size: 20px;
+    }
+
+    .section-head span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .bars,
+    .list,
+    .history-list,
+    .reflection-list,
+    .mood-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .bar-head strong {
+      font-size: 15px;
+    }
+
+    .track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(95,74,59,0.08);
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .sentence-card,
+    .history-item,
+    .reflection-card,
+    .mood-item {
+      border-radius: 20px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.56);
+      border: 1px solid rgba(95,74,59,0.08);
+    }
+
+    .sentence-card p,
+    .history-item p,
+    .reflection-card p {
+      line-height: 1.62;
+    }
+
+    .sentence-meta,
+    .history-meta,
+    .mini-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .keyword-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .keyword {
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(31,122,114,0.11);
+      color: var(--teal);
+      font-size: 13px;
+    }
+
+    .right-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      border-radius: 22px;
+      padding: 16px;
+      background: rgba(255,255,255,0.56);
+      border: 1px solid rgba(95,74,59,0.08);
+    }
+
+    .stat-card .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .dial-shell {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .dial {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: conic-gradient(#c8c1b8 0 100%);
+      padding: 18px;
+      margin: 0 auto;
+      box-shadow: inset 0 0 0 1px rgba(95,74,59,0.06);
+    }
+
+    .dial-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(255,250,243,0.96);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .dial-inner strong {
+      font-size: 34px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .dial-inner span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .mood-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .mood-item strong {
+      font-size: 15px;
+    }
+
+    .mood-right {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chart-shell {
+      border-radius: 22px;
+      border: 1px solid rgba(95,74,59,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,250,243,0.56));
+      min-height: 250px;
+      padding: 12px;
+    }
+
+    .chart-shell svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .chart-empty {
+      min-height: 210px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .chart-caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: rgba(95,74,59,0.1);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 34px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 3px;
+      top: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,250,243,0.92);
+      box-shadow: 0 0 0 1px rgba(95,74,59,0.08);
+    }
+
+    .timeline-card {
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.56);
+      border: 1px solid rgba(95,74,59,0.08);
+    }
+
+    .timeline-card p {
+      line-height: 1.58;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .balance-meter {
+      height: 18px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(95,74,59,0.08);
+      display: flex;
+      margin: 14px 0 10px;
+    }
+
+    .balance-fill {
+      height: 100%;
+      transition: width 0.35s ease;
+    }
+
+    .balance-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .compare-list,
+    .distribution-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .compare-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .compare-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .compare-track {
+      position: relative;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(95,74,59,0.08);
+      overflow: hidden;
+    }
+
+    .compare-current,
+    .compare-baseline {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      border-radius: 999px;
+    }
+
+    .compare-current {
+      height: 12px;
+      opacity: 0.95;
+    }
+
+    .compare-baseline {
+      height: 5px;
+      background: rgba(44, 34, 27, 0.28);
+      top: calc(50% + 5px);
+    }
+
+    .matrix {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .matrix-row {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(95,74,59,0.1);
+    }
+
+    .matrix-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .matrix-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      align-items: center;
+    }
+
+    .matrix-text {
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .matrix-cells {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .matrix-cell {
+      border-radius: 14px;
+      padding: 10px 8px;
+      text-align: center;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(95,74,59,0.08);
+    }
+
+    .matrix-cell strong {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .matrix-cell span {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .distribution-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .distribution-stack {
+      height: 16px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      background: rgba(95,74,59,0.08);
+    }
+
+    .distribution-segment {
+      height: 100%;
+    }
+
+    .distribution-legend {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .signal-callout {
+      border-radius: 20px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      background: rgba(181,83,47,0.08);
+      border: 1px solid rgba(181,83,47,0.12);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.58;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .result-visible {
+      animation: cardReveal 0.58s cubic-bezier(.22,1,.36,1);
+      transform-origin: top center;
+    }
+
+    .flash {
+      animation: softFlash 0.7s ease;
+    }
+
+    .export-surface {
+      width: 1180px;
+      background: linear-gradient(135deg, #fffaf2 0%, #f4e8d9 100%);
+      color: #2c221b;
+      padding: 36px;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .export-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .export-title {
+      font-size: 40px;
+      line-height: 0.98;
+      margin-bottom: 10px;
+      max-width: 10ch;
+    }
+
+    .export-sub {
+      color: #72655b;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 56ch;
+    }
+
+    .export-badge {
+      padding: 12px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(95,74,59,0.12);
+      min-width: 180px;
+    }
+
+    .export-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .export-card {
+      border-radius: 28px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(95,74,59,0.1);
+      box-shadow: 0 18px 40px rgba(97, 71, 52, 0.08);
+      padding: 22px;
+    }
+
+    .export-card h3 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .export-mini {
+      color: #72655b;
+      font-size: 13px;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .export-meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .export-stat {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(95,74,59,0.08);
+    }
+
+    .export-stat strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .export-stat span {
+      color: #72655b;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .export-footer {
+      color: #72655b;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 16px;
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes softFlash {
+      0% { box-shadow: 0 0 0 rgba(181, 83, 47, 0); }
+      35% { box-shadow: 0 0 0 8px rgba(181, 83, 47, 0.08); }
+      100% { box-shadow: 0 0 0 rgba(181, 83, 47, 0); }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      body::before,
+      .topbar,
+      .hero,
+      .layout > .column > section:first-child,
+      .right-stack > section:last-child,
+      .toolbar,
+      .actions,
+      .quick-prompts,
+      .hint,
+      .error {
+        display: none !important;
+      }
+
+      .shell {
+        width: 100%;
+        padding: 0;
+      }
+
+      .panel,
+      .card,
+      .viz-card,
+      .chart-shell {
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main h1 {
+        max-width: none;
+      }
+
+      .export-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        border-radius: 26px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero-grid,
+      .insights-grid,
+      .stat-grid,
+      .viz-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dial-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .result-top {
+        grid-template-columns: 1fr;
+      }
+
+      .emoji-wrap {
+        width: 86px;
+        height: 86px;
+        font-size: 40px;
+      }
+
+      .headline {
+        font-size: 30px;
+      }
+
+      .matrix-cells {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .export-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div class="brand-copy">
+          <strong>Emotion Tracking Support System</strong>
+          <span>Privacy-first local journal analysis for reflection, trends, and lightweight emotional support.</span>
+        </div>
+      </div>
+      <div class="status-pills">
+        <div class="pill"><span class="dot"></span><span id="serverStatus">Checking local server...</span></div>
+        <div class="pill">Mode: <strong id="modeLabel">Local only</strong></div>
+        <div class="pill">History: <strong id="entryCountHeader">0 entries</strong></div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="panel hero-main">
+        <div class="eyebrow">Capstone Demo Dashboard</div>
+        <h1>Track mood patterns through everyday writing.</h1>
+        <p>
+          Write a reflection, analyze emotional signals across multiple labels, and review trend history without sending your journal to the cloud.
+          This interface is designed to feel calm, trustworthy, and presentation-ready for your thesis demo.
+        </p>
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="kicker">Primary value</div>
+            <strong>Local privacy</strong>
+            <p>Entries are analyzed through a local backend and stored only in browser history on this device.</p>
+          </div>
+          <div class="hero-card">
+            <div class="kicker">What it shows</div>
+            <strong>7 emotions</strong>
+            <p>Joy, sadness, anger, fear, love, surprise, and neutral probabilities are returned together.</p>
+          </div>
+          <div class="hero-card">
+            <div class="kicker">Best use</div>
+            <strong>Reflection support</strong>
+            <p>This is a journaling aid for awareness and trend review, not a medical diagnosis tool.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel hero-side">
+        <div class="metric-tile">
+          <div>
+            <div class="meta">Entries today</div>
+            <strong id="todayCount">0</strong>
+          </div>
+          <div class="metric-icon">☀</div>
+        </div>
+        <div class="metric-tile">
+          <div>
+            <div class="meta">Average EHI</div>
+            <strong id="averageEhi">0</strong>
+          </div>
+          <div class="metric-icon">◔</div>
+        </div>
+        <div class="metric-tile">
+          <div>
+            <div class="meta">Most common</div>
+            <strong id="topEmotionHero">None</strong>
+          </div>
+          <div class="metric-icon">✎</div>
+        </div>
+        <div class="metric-tile">
+          <div>
+            <div class="meta">Current streak</div>
+            <strong id="streakCount">0</strong>
+          </div>
+          <div class="metric-icon">↗</div>
+        </div>
+        <div class="topbar-note">
+          Tip for demo: use “Load sample” first, then analyze, then explain the probability bars and sentence-level emotion view.
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="column">
+        <section class="panel card" data-reveal="2">
+          <h2>Write a reflection</h2>
+          <p class="sub">
+            Enter a short diary-style note, class reflection, or stress journal update. The system will estimate emotion probabilities,
+            compute an Emotional Health Index, and save a local history entry after each analysis.
+          </p>
+          <textarea id="journalInput" placeholder="Example: I felt nervous before my presentation, but after starting I became calmer and more confident."></textarea>
+          <div class="input-meta">
+            <span id="charCount">0 characters</span>
+            <span id="wordCount">0 words</span>
+          </div>
+          <div class="actions">
+            <button class="primary" id="analyzeBtn">Analyze entry</button>
+            <button class="secondary" id="sampleBtn">Load sample</button>
+            <button class="ghost" id="clearTextBtn">Clear text</button>
+          </div>
+          <div class="quick-prompts">
+            <button class="prompt-chip" data-prompt="I felt overwhelmed by my workload today, but I was relieved after finishing one difficult task.">Work stress prompt</button>
+            <button class="prompt-chip" data-prompt="I felt lonely this evening, although talking to a friend helped me feel more supported.">Connection prompt</button>
+            <button class="prompt-chip" data-prompt="I felt proud of my progress and more hopeful about the rest of the week.">Positive growth prompt</button>
+          </div>
+          <div class="hint">Run this page through the local server at <strong>http://127.0.0.1:8000</strong> so the frontend can call the <strong>/predict</strong> endpoint.</div>
+          <div class="error" id="errorBox"></div>
+        </section>
+
+        <section class="panel card hidden" id="resultCard" data-reveal="3">
+          <div class="result-top">
+            <div class="emoji-wrap" id="mainEmoji">🙂</div>
+            <div>
+              <div class="eyebrow">Latest Emotion Snapshot</div>
+              <div class="headline" id="mainLabel">Neutral</div>
+              <div class="chips">
+                <div class="chip" id="confidenceChip">Confidence: 0%</div>
+                <div class="chip" id="ehiChip">EHI: 0 / 100</div>
+                <div class="chip" id="polarityChip">Polarity: Neutral</div>
+                <div class="chip" id="riskChip">Risk: Normal</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="insights-grid">
+            <div class="insight-box">
+              <div class="insight-title">Support message</div>
+              <div class="insight-value" id="supportTone">Steady</div>
+              <div class="insight-text" id="supportMessage">No analysis yet.</div>
+            </div>
+            <div class="insight-box">
+              <div class="insight-title">Entry profile</div>
+              <div class="insight-value" id="entryProfile">Compact</div>
+              <div class="insight-text" id="entryProfileText">Write a few lines to reveal stronger mixed-emotion patterns.</div>
+            </div>
+            <div class="insight-box">
+              <div class="insight-title">Detected keywords</div>
+              <div class="keyword-list" id="keywordList"></div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Emotion probabilities</h3>
+              <span>Ranked by the current entry’s strongest signals</span>
+            </div>
+            <div class="bars" id="probabilityBars"></div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Sentence-level analysis</h3>
+              <span>Useful when one reflection contains mixed emotional states</span>
+            </div>
+            <div class="list" id="sentenceList"></div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Reflective prompts</h3>
+              <span>Optional follow-up questions to deepen journaling</span>
+            </div>
+            <div class="reflection-list" id="reflectionList"></div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Multi-angle analysis studio</h3>
+              <span>More precise visual comparison for the current entry</span>
+            </div>
+            <div class="viz-grid">
+              <div class="viz-card">
+                <h4>Emotion radar map</h4>
+                <div class="mini-note">A true SVG radar chart for the latest seven-emotion profile.</div>
+                <div class="chart-shell" id="radarChart"></div>
+                <div class="chart-caption" id="radarCaption">Analyze an entry to project the latest emotional shape.</div>
+              </div>
+
+              <div class="viz-card">
+                <h4>Positive vs negative balance</h4>
+                <div class="mini-note">A quick split between supportive and distress-heavy emotional cues in the latest entry.</div>
+                <div class="balance-meter">
+                  <div class="balance-fill" id="positiveFill"></div>
+                  <div class="balance-fill" id="negativeFill"></div>
+                </div>
+                <div class="balance-meta">
+                  <span id="positiveLabel">Positive: 0%</span>
+                  <span id="negativeLabel">Negative: 0%</span>
+                </div>
+                <div class="signal-callout" id="balanceNarrative">Analyze an entry to generate the balance interpretation.</div>
+              </div>
+
+              <div class="viz-card">
+                <h4>Current vs historical baseline</h4>
+                <div class="mini-note">Compares the latest emotion mix against the average of previous saved entries.</div>
+                <div class="compare-list" id="compareList"></div>
+              </div>
+
+              <div class="viz-card">
+                <h4>Dominant signal path</h4>
+                <div class="mini-note">A true SVG line chart showing how the strongest emotion intensity changes across recent entries.</div>
+                <div class="chart-shell" id="signalLineChart"></div>
+                <div class="chart-legend" id="signalLineLegend"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Sentence emotion matrix</h3>
+              <span>Each sentence mapped across the full seven-emotion spectrum</span>
+            </div>
+            <div class="viz-card">
+              <div class="matrix" id="sentenceMatrix"></div>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-note">Export the current visual summary as a slide-ready image or saveable PDF snapshot.</div>
+            <div class="actions" style="margin-top:0">
+              <button class="secondary" id="exportImageBtn">Export result image</button>
+              <button class="ghost" id="exportPdfBtn">Export result PDF</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="right-stack">
+        <section class="panel card" data-reveal="4">
+          <h2>Trend dashboard</h2>
+          <p class="sub">
+            The dashboard summarizes your local history and makes emotional changes easier to review during a short demo or user reflection session.
+          </p>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="label">Total entries</div>
+              <div class="value" id="entryCount">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Most common emotion</div>
+              <div class="value" id="topEmotion">None</div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Latest entry balance</h3>
+              <span>A quick visual summary of the newest emotional mix</span>
+            </div>
+            <div class="dial-shell">
+              <div class="dial" id="emotionDial">
+                <div class="dial-inner">
+                  <div>
+                    <strong id="dialPrimary">--</strong>
+                    <span id="dialCaption">Analyze an entry to generate the balance ring.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mood-list" id="moodList"></div>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>EHI trend</h3>
+              <span>The most recent local entries on this device</span>
+            </div>
+            <div class="chart-shell" id="trendGraph"></div>
+            <div class="chart-legend" id="trendLegend"></div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h3>Historical emotion distribution</h3>
+              <span>How the overall emotional mix changes across saved entries</span>
+            </div>
+            <div class="distribution-list" id="distributionList"></div>
+          </div>
+
+          <div class="actions">
+            <button class="secondary" id="exportBtn">Export history JSON</button>
+            <button class="ghost" id="clearHistoryBtn">Clear history</button>
+          </div>
+        </section>
+
+        <section class="panel card" data-reveal="4">
+          <h2>Recent timeline</h2>
+          <p class="sub">A journal-style view of the last few analyzed entries with emotion labels and timestamps.</p>
+          <div class="timeline" id="timelineList"></div>
+          <div class="footer-note">
+            If a future version uses a fine-tuned transformer model, the same frontend can stay in place because the API response structure is already separated from the interface layer.
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      result: null,
+      history: [],
+      serverOnline: false,
+      isFileMode: window.location.protocol === "file:",
+    };
+
+    const storageKey = "emotion_tracking_history_v3";
+
+    const el = {
+      journalInput: document.getElementById("journalInput"),
+      analyzeBtn: document.getElementById("analyzeBtn"),
+      sampleBtn: document.getElementById("sampleBtn"),
+      clearTextBtn: document.getElementById("clearTextBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      clearHistoryBtn: document.getElementById("clearHistoryBtn"),
+      errorBox: document.getElementById("errorBox"),
+      charCount: document.getElementById("charCount"),
+      wordCount: document.getElementById("wordCount"),
+      serverStatus: document.getElementById("serverStatus"),
+      modeLabel: document.getElementById("modeLabel"),
+      entryCountHeader: document.getElementById("entryCountHeader"),
+      todayCount: document.getElementById("todayCount"),
+      averageEhi: document.getElementById("averageEhi"),
+      topEmotionHero: document.getElementById("topEmotionHero"),
+      streakCount: document.getElementById("streakCount"),
+      resultCard: document.getElementById("resultCard"),
+      mainEmoji: document.getElementById("mainEmoji"),
+      mainLabel: document.getElementById("mainLabel"),
+      confidenceChip: document.getElementById("confidenceChip"),
+      ehiChip: document.getElementById("ehiChip"),
+      polarityChip: document.getElementById("polarityChip"),
+      riskChip: document.getElementById("riskChip"),
+      supportTone: document.getElementById("supportTone"),
+      supportMessage: document.getElementById("supportMessage"),
+      entryProfile: document.getElementById("entryProfile"),
+      entryProfileText: document.getElementById("entryProfileText"),
+      keywordList: document.getElementById("keywordList"),
+      probabilityBars: document.getElementById("probabilityBars"),
+      sentenceList: document.getElementById("sentenceList"),
+      reflectionList: document.getElementById("reflectionList"),
+      positiveFill: document.getElementById("positiveFill"),
+      negativeFill: document.getElementById("negativeFill"),
+      positiveLabel: document.getElementById("positiveLabel"),
+      negativeLabel: document.getElementById("negativeLabel"),
+      balanceNarrative: document.getElementById("balanceNarrative"),
+      compareList: document.getElementById("compareList"),
+      radarChart: document.getElementById("radarChart"),
+      radarCaption: document.getElementById("radarCaption"),
+      signalLineChart: document.getElementById("signalLineChart"),
+      signalLineLegend: document.getElementById("signalLineLegend"),
+      sentenceMatrix: document.getElementById("sentenceMatrix"),
+      entryCount: document.getElementById("entryCount"),
+      topEmotion: document.getElementById("topEmotion"),
+      emotionDial: document.getElementById("emotionDial"),
+      dialPrimary: document.getElementById("dialPrimary"),
+      dialCaption: document.getElementById("dialCaption"),
+      moodList: document.getElementById("moodList"),
+      trendGraph: document.getElementById("trendGraph"),
+      trendLegend: document.getElementById("trendLegend"),
+      distributionList: document.getElementById("distributionList"),
+      timelineList: document.getElementById("timelineList"),
+      exportImageBtn: document.getElementById("exportImageBtn"),
+      exportPdfBtn: document.getElementById("exportPdfBtn"),
+    };
+
+    const emotionOrder = ["joy", "love", "surprise", "neutral", "fear", "anger", "sadness"];
+
+    function titleCase(value) {
+      if (!value) return "None";
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function emojiFor(label) {
+      const map = {
+        joy: "😊",
+        sadness: "😔",
+        anger: "😠",
+        fear: "😟",
+        love: "💛",
+        surprise: "😮",
+        neutral: "😐",
+      };
+      return map[label] || "🙂";
+    }
+
+    function colorFor(label) {
+      const map = {
+        joy: "#d8a144",
+        sadness: "#4b7bec",
+        anger: "#b23a48",
+        fear: "#7b5dc7",
+        love: "#e58ea2",
+        surprise: "#1f7a72",
+        neutral: "#9f9487",
+      };
+      return map[label] || "#9f9487";
+    }
+
+    function gradientFor(label) {
+      const map = {
+        joy: "linear-gradient(90deg,#f0c15d,#d68535)",
+        sadness: "linear-gradient(90deg,#80b0ff,#4b7bec)",
+        anger: "linear-gradient(90deg,#ea7c7c,#b23a48)",
+        fear: "linear-gradient(90deg,#b395ff,#7b5dc7)",
+        love: "linear-gradient(90deg,#f3b0c0,#e58ea2)",
+        surprise: "linear-gradient(90deg,#59b8a9,#1f7a72)",
+        neutral: "linear-gradient(90deg,#c9bfb5,#9f9487)",
+      };
+      return map[label] || map.neutral;
+    }
+
+    function tokenize(text) {
+      return (text.toLowerCase().match(/[a-z']+/g) || []);
+    }
+
+    function updateInputStats() {
+      const value = el.journalInput.value;
+      el.charCount.textContent = `${value.length} characters`;
+      el.wordCount.textContent = `${tokenize(value).length} words`;
+    }
+
+    function saveHistory() {
+      localStorage.setItem(storageKey, JSON.stringify(state.history));
+    }
+
+    function loadHistory() {
+      try {
+        state.history = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch (err) {
+        state.history = [];
+      }
+    }
+
+    function computeStreak(history) {
+      if (!history.length) return 0;
+      const uniqueDays = [...new Set(history.map((item) => new Date(item.created_at).toDateString()))];
+      uniqueDays.sort((a, b) => new Date(b) - new Date(a));
+      let streak = 0;
+      let cursor = new Date();
+      cursor.setHours(0, 0, 0, 0);
+      for (const day of uniqueDays) {
+        const current = new Date(day);
+        current.setHours(0, 0, 0, 0);
+        if (current.getTime() === cursor.getTime()) {
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 1);
+        } else if (streak === 0 && current.getTime() === cursor.getTime() - 86400000) {
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 2);
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function buildReflectionPrompts(result) {
+      const top = result.label_name;
+      const prompts = {
+        joy: [
+          "What specifically helped create this positive shift today?",
+          "How could you repeat this experience later in the week?",
+        ],
+        sadness: [
+          "What part of today felt the heaviest, and why?",
+          "What is one small form of support or rest that would help tonight?",
+        ],
+        anger: [
+          "What boundary or expectation may have been crossed here?",
+          "What would help release tension before reacting again?",
+        ],
+        fear: [
+          "What part of this situation feels uncertain or hard to control?",
+          "What is the smallest next step that would reduce pressure?",
+        ],
+        love: [
+          "Who or what helped you feel connected in this moment?",
+          "How can you acknowledge that support more clearly?",
+        ],
+        surprise: [
+          "What changed unexpectedly in this situation?",
+          "Do you need more reflection before you can name the feeling more precisely?",
+        ],
+        neutral: [
+          "Did anything subtle stand out emotionally, even if it feels balanced overall?",
+          "What might this entry look like on a more stressful or more positive day?",
+        ],
+      };
+      return prompts[top] || prompts.neutral;
+    }
+
+    function probsToMap(probs) {
+      const map = {};
+      (probs || []).forEach((item) => {
+        map[item.label] = item.score;
+      });
+      return map;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function toPercent(value) {
+      return `${((value || 0) * 100).toFixed(1)}%`;
+    }
+
+    function pointsToPath(points) {
+      if (!points.length) return "";
+      return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
+    }
+
+    function polarPoint(cx, cy, radius, angleDeg) {
+      const angle = (angleDeg - 90) * Math.PI / 180;
+      return {
+        x: cx + Math.cos(angle) * radius,
+        y: cy + Math.sin(angle) * radius,
+      };
+    }
+
+    function averageHistoryProbs(history) {
+      if (!history.length) return {};
+      const totals = {};
+      history.forEach((item) => {
+        (item.probs || []).forEach((prob) => {
+          totals[prob.label] = (totals[prob.label] || 0) + prob.score;
+        });
+      });
+      const averages = {};
+      Object.keys(totals).forEach((label) => {
+        averages[label] = totals[label] / history.length;
+      });
+      return averages;
+    }
+
+    function renderBalanceMeter(result) {
+      const map = probsToMap(result.probs);
+      const positive = (map.joy || 0) + (map.love || 0);
+      const negative = (map.sadness || 0) + (map.anger || 0) + (map.fear || 0);
+      const neutralish = 1 - Math.min(1, positive + negative);
+      const total = positive + negative + neutralish || 1;
+      const positivePct = (positive / total) * 100;
+      const negativePct = (negative / total) * 100;
+      const neutralPct = Math.max(0, 100 - positivePct - negativePct);
+
+      el.positiveFill.style.width = `${positivePct + neutralPct / 2}%`;
+      el.positiveFill.style.background = "linear-gradient(90deg,#d8a144,#1f7a72)";
+      el.negativeFill.style.width = `${negativePct + neutralPct / 2}%`;
+      el.negativeFill.style.background = "linear-gradient(90deg,#f0c3a7,#b23a48)";
+      el.positiveLabel.textContent = `Positive: ${(positive * 100).toFixed(1)}%`;
+      el.negativeLabel.textContent = `Negative: ${(negative * 100).toFixed(1)}%`;
+
+      let narrative = "The entry is emotionally balanced, with both supportive and difficult signals present.";
+      if (positive - negative > 0.16) {
+        narrative = "The emotional balance leans positive, suggesting recovery, support, or hopeful language outweighs distress.";
+      } else if (negative - positive > 0.16) {
+        narrative = "The emotional balance leans negative, suggesting stress, sadness, anger, or worry is more dominant in this entry.";
+      }
+      el.balanceNarrative.textContent = narrative;
+    }
+
+    function renderRadarChart(result) {
+      const probs = probsToMap(result.probs || []);
+      const labels = emotionOrder;
+      if (!labels.length) {
+        el.radarChart.innerHTML = '<div class="chart-empty">No radar data available.</div>';
+        el.radarCaption.textContent = "Analyze an entry to project the latest emotional shape.";
+        return;
+      }
+
+      const size = 340;
+      const cx = size / 2;
+      const cy = size / 2;
+      const maxRadius = 118;
+      const levels = [0.25, 0.5, 0.75, 1];
+
+      const gridPolygons = levels.map((level) => {
+        const points = labels.map((_, index) => {
+          const angle = (360 / labels.length) * index;
+          const point = polarPoint(cx, cy, maxRadius * level, angle);
+          return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+        }).join(" ");
+        return `<polygon points="${points}" fill="none" stroke="rgba(95,74,59,0.14)" stroke-width="1" />`;
+      }).join("");
+
+      const spokes = labels.map((label, index) => {
+        const angle = (360 / labels.length) * index;
+        const point = polarPoint(cx, cy, maxRadius, angle);
+        const labelPoint = polarPoint(cx, cy, maxRadius + 28, angle);
+        return `
+          <line x1="${cx}" y1="${cy}" x2="${point.x.toFixed(2)}" y2="${point.y.toFixed(2)}" stroke="rgba(95,74,59,0.12)" stroke-width="1"/>
+          <text x="${labelPoint.x.toFixed(2)}" y="${labelPoint.y.toFixed(2)}" text-anchor="middle" dominant-baseline="middle" fill="#72655b" font-size="11" letter-spacing="0.04em">${titleCase(label)}</text>
+        `;
+      }).join("");
+
+      const dataPoints = labels.map((label, index) => {
+        const angle = (360 / labels.length) * index;
+        return polarPoint(cx, cy, maxRadius * (probs[label] || 0), angle);
+      });
+
+      const polygon = dataPoints.map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(" ");
+      const circles = dataPoints.map((point, index) => `
+        <circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="4.5" fill="${colorFor(labels[index])}" stroke="#fffaf3" stroke-width="2"/>
+      `).join("");
+
+      el.radarChart.innerHTML = `
+        <svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Emotion radar chart">
+          <defs>
+            <linearGradient id="radarFill" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(181,83,47,0.32)"/>
+              <stop offset="100%" stop-color="rgba(31,122,114,0.2)"/>
+            </linearGradient>
+          </defs>
+          ${gridPolygons}
+          ${spokes}
+          <polygon points="${polygon}" fill="rgba(181,83,47,0.18)" stroke="#b5532f" stroke-width="2.5" />
+          ${circles}
+          <circle cx="${cx}" cy="${cy}" r="5" fill="#fffaf3" stroke="#b5532f" stroke-width="2"/>
+        </svg>
+      `;
+
+      const strongest = (result.probs || [])[0];
+      el.radarCaption.textContent = strongest
+        ? `${titleCase(strongest.label)} forms the most extended axis at ${toPercent(strongest.score)}.`
+        : "Analyze an entry to project the latest emotional shape.";
+    }
+
+    function renderCompareChart(result) {
+      const baselineHistory = state.history;
+      const baseline = averageHistoryProbs(baselineHistory);
+      const current = probsToMap(result.probs);
+      const labels = (result.probs || []).slice(0, 6).map((item) => item.label);
+
+      el.compareList.innerHTML = "";
+      if (!labels.length) {
+        el.compareList.innerHTML = '<div class="mini-note">No current probabilities to compare.</div>';
+        return;
+      }
+
+      labels.forEach((label) => {
+        const currentScore = current[label] || 0;
+        const baselineScore = baseline[label] || 0;
+        const row = document.createElement("div");
+        row.className = "compare-row";
+        row.innerHTML = `
+          <div class="compare-head">
+            <strong>${titleCase(label)}</strong>
+            <span>Current ${(currentScore * 100).toFixed(1)}% · Baseline ${(baselineScore * 100).toFixed(1)}%</span>
+          </div>
+          <div class="compare-track">
+            <div class="compare-current" style="width:${(currentScore * 100).toFixed(1)}%; background:${gradientFor(label)}"></div>
+            <div class="compare-baseline" style="width:${(baselineScore * 100).toFixed(1)}%"></div>
+          </div>
+        `;
+        el.compareList.appendChild(row);
+      });
+
+      if (!baselineHistory.length) {
+        const note = document.createElement("div");
+        note.className = "mini-note";
+        note.textContent = "Historical baseline appears after at least two saved entries.";
+        el.compareList.appendChild(note);
+      }
+    }
+
+    function renderSentenceMatrix(result) {
+      el.sentenceMatrix.innerHTML = "";
+      const sentences = result.sentences || [];
+      if (!sentences.length) {
+        el.sentenceMatrix.innerHTML = '<div class="mini-note">No sentence-level data available.</div>';
+        return;
+      }
+
+      sentences.forEach((sentence, index) => {
+        const row = document.createElement("div");
+        row.className = "matrix-row";
+        const cells = (sentence.probs || []).map((prob) => {
+          const intensity = Math.max(0.08, prob.score);
+          return `
+            <div class="matrix-cell" style="background:linear-gradient(180deg, rgba(255,255,255,0.88), ${colorFor(prob.label)}${Math.round(intensity * 255).toString(16).padStart(2, "0")})">
+              <strong>${prob.label}</strong>
+              <span>${(prob.score * 100).toFixed(1)}%</span>
+            </div>
+          `;
+        }).join("");
+        row.innerHTML = `
+          <div class="matrix-head">
+            <span>Sentence ${index + 1}</span>
+            <span>Dominant: <strong>${titleCase(sentence.top_label)}</strong></span>
+          </div>
+          <div class="matrix-text">${sentence.text}</div>
+          <div class="matrix-cells">${cells}</div>
+        `;
+        el.sentenceMatrix.appendChild(row);
+      });
+    }
+
+    function renderReflectionPrompts(result) {
+      const prompts = buildReflectionPrompts(result);
+      el.reflectionList.innerHTML = "";
+      prompts.forEach((prompt) => {
+        const item = document.createElement("div");
+        item.className = "reflection-card";
+        item.innerHTML = `<p>${prompt}</p>`;
+        el.reflectionList.appendChild(item);
+      });
+    }
+
+    function describeProfile(text, result) {
+      const words = tokenize(text).length;
+      const sentenceCount = (result.sentences || []).length;
+      if (words >= 35 || sentenceCount >= 3) {
+        return {
+          title: "Layered",
+          text: "This entry is long enough to reveal multiple emotional cues and stronger contrast between sentences."
+        };
+      }
+      if (words >= 18) {
+        return {
+          title: "Balanced",
+          text: "This reflection gives enough context for a clear main emotion while still staying concise."
+        };
+      }
+      return {
+        title: "Compact",
+        text: "This is a short snapshot. A few extra details could produce richer sentence-level analysis."
+      };
+    }
+
+    function renderEmotionDial(probs) {
+      if (!probs || !probs.length) {
+        el.emotionDial.style.background = "conic-gradient(#c8c1b8 0 100%)";
+        el.dialPrimary.textContent = "--";
+        el.dialCaption.textContent = "Analyze an entry to generate the balance ring.";
+        el.moodList.innerHTML = '<div class="mood-item"><span>No latest entry yet.</span></div>';
+        return;
+      }
+
+      let cursor = 0;
+      const segments = probs.map((item) => {
+        const start = cursor;
+        const slice = Math.max(item.score * 360, 6);
+        cursor += slice;
+        return `${colorFor(item.label)} ${start}deg ${cursor}deg`;
+      });
+
+      el.emotionDial.style.background = `conic-gradient(${segments.join(", ")})`;
+      el.dialPrimary.textContent = titleCase(probs[0].label);
+      el.dialCaption.textContent = `${(probs[0].score * 100).toFixed(1)}% strongest signal in the latest analyzed entry.`;
+
+      el.moodList.innerHTML = "";
+      probs.slice(0, 5).forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "mood-item";
+        row.innerHTML = `
+          <div><strong>${titleCase(item.label)}</strong></div>
+          <div class="mood-right">${(item.score * 100).toFixed(1)}%</div>
+        `;
+        el.moodList.appendChild(row);
+      });
+    }
+
+    function buildTrendPoints(values, width, height, min, max) {
+      if (!values.length) return [];
+      const span = Math.max(1, max - min);
+      return values.map((value, index) => {
+        const x = values.length === 1 ? width / 2 : (index / (values.length - 1)) * width;
+        const y = height - ((value - min) / span) * height;
+        return { x, y, value };
+      });
+    }
+
+    function renderLineChart(container, legendEl, config) {
+      const { series, emptyText, yMin = 0, yMax = 100, height = 220, width = 700, yTicks = [0, 25, 50, 75, 100] } = config;
+      const validSeries = (series || []).filter((item) => item.values && item.values.length);
+      container.innerHTML = "";
+      if (legendEl) legendEl.innerHTML = "";
+
+      if (!validSeries.length) {
+        container.innerHTML = `<div class="chart-empty">${emptyText}</div>`;
+        return;
+      }
+
+      const margin = { top: 16, right: 22, bottom: 34, left: 38 };
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const xCount = Math.max(...validSeries.map((item) => item.values.length));
+
+      const yGrid = yTicks.map((tick) => {
+        const y = margin.top + innerHeight - ((tick - yMin) / Math.max(1, yMax - yMin)) * innerHeight;
+        return `
+          <line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${width - margin.right}" y2="${y.toFixed(2)}" stroke="rgba(95,74,59,0.1)" stroke-width="1"/>
+          <text x="${margin.left - 10}" y="${(y + 4).toFixed(2)}" text-anchor="end" fill="#72655b" font-size="11">${tick}</text>
+        `;
+      }).join("");
+
+      const xTicks = Array.from({ length: xCount }, (_, index) => {
+        const x = margin.left + (xCount === 1 ? innerWidth / 2 : (index / (xCount - 1)) * innerWidth);
+        const label = config.xLabels && config.xLabels[index] ? config.xLabels[index] : `#${index + 1}`;
+        return `
+          <line x1="${x.toFixed(2)}" y1="${margin.top + innerHeight}" x2="${x.toFixed(2)}" y2="${margin.top + innerHeight + 4}" stroke="rgba(95,74,59,0.12)" stroke-width="1"/>
+          <text x="${x.toFixed(2)}" y="${height - 8}" text-anchor="middle" fill="#72655b" font-size="11">${escapeHtml(label)}</text>
+        `;
+      }).join("");
+
+      const seriesMarkup = validSeries.map((item) => {
+        const points = buildTrendPoints(item.values, innerWidth, innerHeight, yMin, yMax)
+          .map((point) => ({ ...point, x: point.x + margin.left, y: point.y + margin.top }));
+        const path = pointsToPath(points);
+        const areaPath = `${path} L ${points[points.length - 1].x.toFixed(2)} ${(margin.top + innerHeight).toFixed(2)} L ${points[0].x.toFixed(2)} ${(margin.top + innerHeight).toFixed(2)} Z`;
+        const dots = points.map((point) => `
+          <circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="4.5" fill="${item.color}" stroke="#fffaf3" stroke-width="2"/>
+        `).join("");
+        return `
+          <path d="${areaPath}" fill="${item.fill || "rgba(31,122,114,0.08)"}"/>
+          <path d="${path}" fill="none" stroke="${item.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          ${dots}
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(config.ariaLabel || "Line chart")}">
+          <defs>
+            <linearGradient id="trendArea" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(31,122,114,0.24)"/>
+              <stop offset="100%" stop-color="rgba(31,122,114,0.02)"/>
+            </linearGradient>
+          </defs>
+          ${yGrid}
+          <line x1="${margin.left}" y1="${margin.top + innerHeight}" x2="${width - margin.right}" y2="${margin.top + innerHeight}" stroke="rgba(95,74,59,0.18)" stroke-width="1.3"/>
+          ${seriesMarkup}
+          ${xTicks}
+        </svg>
+      `;
+
+      if (legendEl) {
+        validSeries.forEach((item) => {
+          const node = document.createElement("div");
+          node.className = "legend-item";
+          node.innerHTML = `<span class="legend-swatch" style="background:${item.color}"></span><span>${item.name}</span>`;
+          legendEl.appendChild(node);
+        });
+      }
+    }
+
+    function renderSignalLineChart() {
+      const recent = state.history.slice(-8);
+      if (!recent.length) {
+        renderLineChart(el.signalLineChart, el.signalLineLegend, {
+          series: [],
+          emptyText: "The signal path appears after your first saved analysis.",
+        });
+        return;
+      }
+
+      const values = recent.map((item) => Number(item.score || 0) * 100);
+      const colors = recent.map((item) => colorFor(item.label_name));
+      const avgColor = colors[colors.length - 1] || "#1f7a72";
+
+      renderLineChart(el.signalLineChart, el.signalLineLegend, {
+        series: [
+          {
+            name: "Dominant emotion confidence",
+            values,
+            color: avgColor,
+            fill: "rgba(31,122,114,0.08)",
+          },
+        ],
+        xLabels: recent.map((_, index) => `#${state.history.length - recent.length + index + 1}`),
+        emptyText: "The signal path appears after your first saved analysis.",
+        yMin: 0,
+        yMax: 100,
+        ariaLabel: "Dominant emotion confidence over recent entries",
+      });
+    }
+
+    function renderResult(result, originalText) {
+      state.result = result;
+      el.resultCard.classList.remove("hidden");
+      el.resultCard.classList.remove("result-visible");
+      void el.resultCard.offsetWidth;
+      el.resultCard.classList.add("result-visible", "flash");
+      window.setTimeout(() => el.resultCard.classList.remove("flash"), 750);
+      el.mainEmoji.textContent = emojiFor(result.label_name);
+      el.mainLabel.textContent = titleCase(result.label_name);
+      el.confidenceChip.textContent = `Confidence: ${(result.score * 100).toFixed(1)}%`;
+      el.ehiChip.textContent = `EHI: ${result.ehi} / 100`;
+      el.polarityChip.textContent = `Polarity: ${result.polarity_label}`;
+      el.riskChip.textContent = `Risk: ${titleCase(result.risk_level)}`;
+      el.supportTone.textContent = result.risk_level === "high" ? "Urgent care" : titleCase(result.label_name);
+      el.supportMessage.textContent = result.support_message || "No support message available.";
+      el.modeLabel.textContent = result.model_name || "Local only";
+
+      const profile = describeProfile(originalText, result);
+      el.entryProfile.textContent = profile.title;
+      el.entryProfileText.textContent = profile.text;
+
+      el.keywordList.innerHTML = "";
+      if ((result.keywords || []).length) {
+        result.keywords.forEach((keyword) => {
+          const node = document.createElement("span");
+          node.className = "keyword";
+          node.textContent = keyword;
+          el.keywordList.appendChild(node);
+        });
+      } else {
+        el.keywordList.innerHTML = '<span class="keyword">No dominant keywords found</span>';
+      }
+
+      el.probabilityBars.innerHTML = "";
+      (result.probs || []).forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        row.innerHTML = `
+          <div class="bar-head">
+            <strong>${titleCase(item.label)}</strong>
+            <span>${(item.score * 100).toFixed(1)}%</span>
+          </div>
+          <div class="track">
+            <div class="fill" style="width:${(item.score * 100).toFixed(1)}%; background:${gradientFor(item.label)}"></div>
+          </div>
+        `;
+        el.probabilityBars.appendChild(row);
+      });
+
+      el.sentenceList.innerHTML = "";
+      (result.sentences || []).forEach((sentence) => {
+        const item = document.createElement("div");
+        item.className = "sentence-card";
+        item.innerHTML = `
+          <p>${sentence.text}</p>
+          <div class="sentence-meta">
+            Top emotion: <strong>${titleCase(sentence.top_label)}</strong>
+            · confidence ${(sentence.top_score * 100).toFixed(1)}%
+          </div>
+        `;
+        el.sentenceList.appendChild(item);
+      });
+
+      renderReflectionPrompts(result);
+      renderRadarChart(result);
+      renderBalanceMeter(result);
+      renderCompareChart(result);
+      renderSentenceMatrix(result);
+      renderEmotionDial(result.probs || []);
+      renderSignalLineChart();
+    }
+
+    function renderTrend(history) {
+      const recent = history.slice(-8);
+      renderLineChart(el.trendGraph, el.trendLegend, {
+        series: recent.length ? [
+          {
+            name: "EHI",
+            values: recent.map((item) => Number(item.ehi || 0)),
+            color: "#1f7a72",
+            fill: "rgba(31,122,114,0.08)",
+          },
+          {
+            name: "Confidence",
+            values: recent.map((item) => Number(item.score || 0) * 100),
+            color: "#b5532f",
+            fill: "rgba(181,83,47,0.04)",
+          },
+        ] : [],
+        xLabels: recent.map((_, index) => `#${history.length - recent.length + index + 1}`),
+        emptyText: "The EHI trend will appear after your first saved analysis.",
+        yMin: 0,
+        yMax: 100,
+        ariaLabel: "EHI and confidence trend over recent entries",
+      });
+    }
+
+    function renderTimeline(history) {
+      el.timelineList.innerHTML = "";
+      if (!history.length) {
+        el.timelineList.innerHTML = '<div class="timeline-item"><div class="timeline-card"><p>No local history yet. Analyze a reflection to start building the timeline.</p></div></div>';
+        return;
+      }
+
+      history.slice().reverse().slice(0, 8).forEach((item) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "timeline-item";
+        wrapper.innerHTML = `
+          <div class="timeline-dot" style="background:${colorFor(item.label_name)}"></div>
+          <div class="timeline-card">
+            <p>${item.text}</p>
+            <div class="history-meta">
+              ${titleCase(item.label_name)} · EHI ${item.ehi} · ${new Date(item.created_at).toLocaleString()}
+            </div>
+          </div>
+        `;
+        el.timelineList.appendChild(wrapper);
+      });
+    }
+
+    function renderDashboard() {
+      const history = state.history;
+      el.entryCount.textContent = String(history.length);
+      el.entryCountHeader.textContent = `${history.length} ${history.length === 1 ? "entry" : "entries"}`;
+
+      const counts = {};
+      let ehiSum = 0;
+      let todayCounter = 0;
+      const today = new Date().toDateString();
+
+      history.forEach((item) => {
+        counts[item.label_name] = (counts[item.label_name] || 0) + 1;
+        ehiSum += Number(item.ehi || 0);
+        if (new Date(item.created_at).toDateString() === today) {
+          todayCounter += 1;
+        }
+      });
+
+      const topEmotion = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      const topLabel = topEmotion ? titleCase(topEmotion[0]) : "None";
+      el.topEmotion.textContent = topLabel;
+      el.topEmotionHero.textContent = topLabel;
+      el.todayCount.textContent = String(todayCounter);
+      el.averageEhi.textContent = history.length ? (ehiSum / history.length).toFixed(1) : "0";
+      el.streakCount.textContent = String(computeStreak(history));
+
+      renderTrend(history);
+      renderHistoryDistribution(history);
+      renderTimeline(history);
+      renderSignalLineChart();
+    }
+
+    function renderHistoryDistribution(history) {
+      el.distributionList.innerHTML = "";
+      if (!history.length) {
+        el.distributionList.innerHTML = '<div class="sentence-card">The historical emotion distribution will appear after your first analysis.</div>';
+        return;
+      }
+
+      history.slice().reverse().slice(0, 5).forEach((item, idx) => {
+        const probs = item.probs || [];
+        const row = document.createElement("div");
+        row.className = "distribution-row";
+        const segments = probs.map((prob) => {
+          return `<div class="distribution-segment" style="width:${(prob.score * 100).toFixed(1)}%; background:${colorFor(prob.label)}"></div>`;
+        }).join("");
+        row.innerHTML = `
+          <div class="distribution-legend">
+            <span>Entry ${history.length - idx}</span>
+            <span>${titleCase(item.label_name)} · EHI ${item.ehi}</span>
+          </div>
+          <div class="distribution-stack">${segments}</div>
+        `;
+        el.distributionList.appendChild(row);
+      });
+    }
+
+    async function checkServer() {
+      if (state.isFileMode) {
+        state.serverOnline = false;
+        el.serverStatus.textContent = "Open through http://127.0.0.1:8000";
+        return;
+      }
+      try {
+        const response = await fetch("/health", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("bad status");
+        }
+        const data = await response.json();
+        state.serverOnline = true;
+        el.serverStatus.textContent = "Local server online";
+        if (data.model) {
+          el.modeLabel.textContent = data.model;
+        }
+      } catch (err) {
+        state.serverOnline = false;
+        el.serverStatus.textContent = "Open via http://127.0.0.1:8000";
+      }
+    }
+
+    async function analyzeEntry() {
+      const text = el.journalInput.value.trim();
+      el.errorBox.textContent = "";
+      if (state.isFileMode) {
+        el.errorBox.textContent = "Do not open the HTML file directly. Start the local server with `python3 app.py` and then open http://127.0.0.1:8000.";
+        return;
+      }
+      if (!text) {
+        el.errorBox.textContent = "Please enter a reflection before analyzing.";
+        return;
+      }
+
+      el.analyzeBtn.disabled = true;
+      el.analyzeBtn.textContent = "Analyzing...";
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || `Request failed with status ${response.status}`);
+        }
+
+        renderResult(data, text);
+        state.history.push({
+          text,
+          label_name: data.label_name,
+          score: data.score,
+          ehi: data.ehi,
+          created_at: new Date().toISOString(),
+          probs: data.probs || [],
+        });
+        saveHistory();
+        renderDashboard();
+      } catch (err) {
+        el.errorBox.textContent = err.message || "Unable to analyze the entry.";
+      } finally {
+        el.analyzeBtn.disabled = false;
+        el.analyzeBtn.textContent = "Analyze entry";
+      }
+    }
+
+    function exportHistory() {
+      const blob = new Blob([JSON.stringify(state.history, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "emotion-history.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function buildExportMarkup() {
+      const result = state.result;
+      if (!result) return "";
+      const latestText = escapeHtml(el.journalInput.value.trim() || "");
+      const probs = result.probs || [];
+      const probabilityRows = probs.map((item) => `
+        <div style="display:grid;gap:6px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;">
+            <strong>${titleCase(item.label)}</strong>
+            <span>${toPercent(item.score)}</span>
+          </div>
+          <div style="height:12px;border-radius:999px;background:rgba(95,74,59,0.08);overflow:hidden;">
+            <div style="height:100%;width:${toPercent(item.score)};background:${gradientFor(item.label)};border-radius:999px;"></div>
+          </div>
+        </div>
+      `).join("");
+
+      const recent = state.history.slice(-6);
+      const trendSvg = recent.length
+        ? buildExportLineSvg(recent.map((item) => Number(item.ehi || 0)), recent.map((_, index) => `#${state.history.length - recent.length + index + 1}`), "#1f7a72", "EHI")
+        : '<div class="chart-empty">Need at least one saved entry for a trend preview.</div>';
+      const radarSvg = buildExportRadarSvg(result.probs || []);
+
+      return `
+        <div class="export-surface">
+          <div class="export-head">
+            <div>
+              <div class="eyebrow" style="margin-bottom:12px;">Emotion Report Snapshot</div>
+              <div class="export-title">Emotion Tracking Support System</div>
+              <div class="export-sub">A single-page summary of the latest local analysis result, designed for presentation slides, demo screenshots, and thesis appendices.</div>
+            </div>
+            <div class="export-badge">
+              <div style="font-size:12px;color:#72655b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Generated</div>
+              <strong style="display:block;font-size:24px;margin-bottom:4px;">${titleCase(result.label_name)}</strong>
+              <div style="color:#72655b;font-size:13px;">${new Date().toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div class="export-meta">
+            <div class="export-stat"><strong>${result.ehi}</strong><span>EHI</span></div>
+            <div class="export-stat"><strong>${toPercent(result.score)}</strong><span>Confidence</span></div>
+            <div class="export-stat"><strong>${titleCase(result.polarity_label)}</strong><span>Polarity</span></div>
+            <div class="export-stat"><strong>${state.history.length}</strong><span>Saved entries</span></div>
+          </div>
+
+          <div class="export-grid">
+            <div class="export-card">
+              <h3>Latest reflection</h3>
+              <div class="export-mini">${escapeHtml(result.support_message || "")}</div>
+              <div style="font-size:17px;line-height:1.7;min-height:110px;">${latestText || "No current journal text in input box."}</div>
+              <div style="margin-top:18px;">
+                ${probabilityRows}
+              </div>
+            </div>
+
+            <div style="display:grid;gap:18px;">
+              <div class="export-card">
+                <h3>Radar profile</h3>
+                <div class="export-mini">Current seven-emotion projection.</div>
+                ${radarSvg}
+              </div>
+              <div class="export-card">
+                <h3>Recent EHI curve</h3>
+                <div class="export-mini">Last six saved entries on this browser.</div>
+                ${trendSvg}
+              </div>
+            </div>
+          </div>
+
+          <div class="export-footer">
+            Privacy note: this snapshot is generated fully on-device from locally stored analysis results. It is intended for reflection support and capstone demonstration, not clinical diagnosis.
+          </div>
+        </div>
+      `;
+    }
+
+    function buildExportStyles() {
+      return `
+        .eyebrow{display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(181,83,47,0.12);color:#b5532f;text-transform:uppercase;font-size:11px;letter-spacing:0.1em;}
+        .chart-empty{min-height:210px;display:grid;place-items:center;text-align:center;color:#72655b;font-size:14px;line-height:1.6;padding:20px;}
+        .export-surface{width:1180px;background:linear-gradient(135deg,#fffaf2 0%,#f4e8d9 100%);color:#2c221b;padding:36px;font-family:Georgia,"Times New Roman",serif;}
+        .export-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:24px;}
+        .export-title{font-size:40px;line-height:.98;margin-bottom:10px;max-width:10ch;}
+        .export-sub{color:#72655b;font-size:16px;line-height:1.6;max-width:56ch;}
+        .export-badge{padding:12px 16px;border-radius:20px;background:rgba(255,255,255,0.68);border:1px solid rgba(95,74,59,0.12);min-width:180px;}
+        .export-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-bottom:18px;}
+        .export-card{border-radius:28px;background:rgba(255,255,255,0.7);border:1px solid rgba(95,74,59,0.1);box-shadow:0 18px 40px rgba(97,71,52,0.08);padding:22px;}
+        .export-card h3{font-size:22px;margin:0 0 6px;}
+        .export-mini{color:#72655b;font-size:13px;line-height:1.55;margin-bottom:14px;}
+        .export-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0;}
+        .export-stat{border-radius:18px;padding:14px;background:rgba(255,255,255,0.78);border:1px solid rgba(95,74,59,0.08);}
+        .export-stat strong{display:block;font-size:24px;margin-bottom:4px;}
+        .export-stat span{color:#72655b;font-size:12px;text-transform:uppercase;letter-spacing:.08em;}
+        .export-footer{color:#72655b;font-size:12px;line-height:1.5;margin-top:16px;}
+      `;
+    }
+
+    function buildExportRadarSvg(probs) {
+      const map = probsToMap(probs || []);
+      const labels = emotionOrder;
+      const size = 300;
+      const cx = 150;
+      const cy = 150;
+      const maxRadius = 96;
+      const rings = [0.25, 0.5, 0.75, 1].map((level) => {
+        const points = labels.map((_, index) => {
+          const point = polarPoint(cx, cy, maxRadius * level, (360 / labels.length) * index);
+          return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+        }).join(" ");
+        return `<polygon points="${points}" fill="none" stroke="rgba(95,74,59,0.14)" stroke-width="1"/>`;
+      }).join("");
+      const polygon = labels.map((label, index) => {
+        const point = polarPoint(cx, cy, maxRadius * (map[label] || 0), (360 / labels.length) * index);
+        return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+      }).join(" ");
+      const labelText = labels.map((label, index) => {
+        const point = polarPoint(cx, cy, maxRadius + 24, (360 / labels.length) * index);
+        return `<text x="${point.x.toFixed(2)}" y="${point.y.toFixed(2)}" text-anchor="middle" dominant-baseline="middle" fill="#72655b" font-size="10">${titleCase(label)}</text>`;
+      }).join("");
+      return `
+        <svg viewBox="0 0 ${size} ${size}" style="width:100%;height:auto;display:block;">
+          ${rings}
+          ${labelText}
+          <polygon points="${polygon}" fill="rgba(181,83,47,0.18)" stroke="#b5532f" stroke-width="2.4"/>
+        </svg>
+      `;
+    }
+
+    function buildExportLineSvg(values, labels, color, name) {
+      const width = 520;
+      const height = 240;
+      const margin = { top: 20, right: 18, bottom: 34, left: 34 };
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const points = buildTrendPoints(values, innerWidth, innerHeight, 0, 100)
+        .map((point) => ({ ...point, x: point.x + margin.left, y: point.y + margin.top }));
+      const path = pointsToPath(points);
+      const dots = points.map((point) => `<circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="4" fill="${color}" stroke="#fffaf3" stroke-width="2"/>`).join("");
+      const xTicks = labels.map((label, index) => {
+        const x = margin.left + (labels.length === 1 ? innerWidth / 2 : (index / (labels.length - 1)) * innerWidth);
+        return `<text x="${x.toFixed(2)}" y="${height - 8}" text-anchor="middle" fill="#72655b" font-size="10">${escapeHtml(label)}</text>`;
+      }).join("");
+      return `
+        <svg viewBox="0 0 ${width} ${height}" style="width:100%;height:auto;display:block;">
+          <line x1="${margin.left}" y1="${margin.top + innerHeight}" x2="${width - margin.right}" y2="${margin.top + innerHeight}" stroke="rgba(95,74,59,0.18)" stroke-width="1.2"/>
+          <path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          ${dots}
+          ${xTicks}
+          <text x="${margin.left}" y="${margin.top - 2}" fill="#72655b" font-size="11">${escapeHtml(name)}</text>
+        </svg>
+      `;
+    }
+
+    async function exportResultImage() {
+      if (!state.result) {
+        el.errorBox.textContent = "Analyze an entry before exporting an image.";
+        return;
+      }
+
+      const markup = buildExportMarkup();
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1320" viewBox="0 0 1180 1320">
+          <style>${buildExportStyles()}</style>
+          <foreignObject width="100%" height="100%">
+            <div xmlns="http://www.w3.org/1999/xhtml">${markup}</div>
+          </foreignObject>
+        </svg>
+      `;
+
+      const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1180;
+        canvas.height = 1320;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          URL.revokeObjectURL(url);
+          el.errorBox.textContent = "Unable to prepare the image export canvas in this browser.";
+          return;
+        }
+        context.fillStyle = "#fffaf2";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((pngBlob) => {
+          if (!pngBlob) return;
+          const pngUrl = URL.createObjectURL(pngBlob);
+          const link = document.createElement("a");
+          link.href = pngUrl;
+          link.download = "emotion-analysis-report.png";
+          link.click();
+          URL.revokeObjectURL(pngUrl);
+        }, "image/png");
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        el.errorBox.textContent = "Image export failed in this browser. Please try the PDF export instead.";
+      };
+      image.src = url;
+    }
+
+    function exportResultPdf() {
+      if (!state.result) {
+        el.errorBox.textContent = "Analyze an entry before exporting a PDF.";
+        return;
+      }
+
+      const printWindow = window.open("", "_blank", "width=1280,height=960");
+      if (!printWindow) {
+        el.errorBox.textContent = "Your browser blocked the PDF export window. Please allow pop-ups and try again.";
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Emotion Analysis Report</title>
+          <style>${document.querySelector("style").textContent}</style>
+        </head>
+        <body style="margin:0;background:#fffaf2;">
+          ${buildExportMarkup()}
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+    }
+
+    function clearHistory() {
+      state.history = [];
+      state.result = null;
+      saveHistory();
+      renderDashboard();
+      renderEmotionDial([]);
+      el.resultCard.classList.add("hidden");
+    }
+
+    function loadSample() {
+      el.journalInput.value = "I felt overwhelmed by assignments this morning, but after meeting my teammate I felt calmer, more supported, and a little more hopeful.";
+      updateInputStats();
+    }
+
+    el.analyzeBtn.addEventListener("click", analyzeEntry);
+    el.sampleBtn.addEventListener("click", loadSample);
+    el.clearTextBtn.addEventListener("click", () => {
+      el.journalInput.value = "";
+      el.errorBox.textContent = "";
+      updateInputStats();
+    });
+    el.exportBtn.addEventListener("click", exportHistory);
+    el.exportImageBtn.addEventListener("click", exportResultImage);
+    el.exportPdfBtn.addEventListener("click", exportResultPdf);
+    el.clearHistoryBtn.addEventListener("click", clearHistory);
+    el.journalInput.addEventListener("input", updateInputStats);
+
+    document.querySelectorAll(".prompt-chip").forEach((button) => {
+      button.addEventListener("click", () => {
+        el.journalInput.value = button.dataset.prompt || "";
+        updateInputStats();
+      });
+    });
+
+    loadHistory();
+    updateInputStats();
+    renderDashboard();
+    if (state.isFileMode) {
+      el.errorBox.textContent = "This page must be opened through the local server. Run `python3 app.py` in the project folder and visit http://127.0.0.1:8000.";
+    }
+    if (state.history.length) {
+      const latest = state.history[state.history.length - 1];
+      renderEmotionDial(latest.probs || []);
+      renderSignalLineChart();
+    } else {
+      renderEmotionDial([]);
+      renderSignalLineChart();
+    }
+    checkServer();
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

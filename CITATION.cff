@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: "AI-Powered Sentiment Tracking and Support System"
+message: "If you use this capstone prototype, please cite it using this metadata."
+type: software
+authors:
+  - family-names: Shen
+    given-names: Yiming
+year: 2026
+repository-code: "https://github.com/shenyim/sentiment-web"
+abstract: "A privacy-first local web application for diary-style emotion tracking and emotional well-being reflection."
+license: MIT

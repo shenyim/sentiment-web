@@ -1,0 +1,1012 @@
+{
+  "benchmark_size": 54,
+  "benchmark_labels": [
+    "joy",
+    "sadness",
+    "anger",
+    "fear",
+    "love",
+    "surprise"
+  ],
+  "benchmark_source": {
+    "lexicon_words": "derived from model.py EMOTION_LEXICON",
+    "phrase_hints": "derived from model.py PHRASE_HINTS",
+    "seed_examples": "extended with evaluate.py SAMPLE_SET",
+    "thesis_alignment": "focuses on active emotion categories used in the sentiment-tracking prototype and literature cited in the thesis"
+  },
+  "staged_loss_curve": [
+    {
+      "stage": "Epoch 1",
+      "train_loss": 0.3021,
+      "validation_loss": 0.5617,
+      "components": {
+        "lexicon_fraction": 0.25,
+        "use_phrase_hints": false,
+        "use_negation": false,
+        "use_intensifiers": false,
+        "use_short_text_bias": false,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 2",
+      "train_loss": 0.209,
+      "validation_loss": 0.4988,
+      "components": {
+        "lexicon_fraction": 0.4,
+        "use_phrase_hints": false,
+        "use_negation": false,
+        "use_intensifiers": false,
+        "use_short_text_bias": false,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 3",
+      "train_loss": 0.0999,
+      "validation_loss": 0.3599,
+      "components": {
+        "lexicon_fraction": 0.55,
+        "use_phrase_hints": true,
+        "use_negation": false,
+        "use_intensifiers": false,
+        "use_short_text_bias": false,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 4",
+      "train_loss": 0.0958,
+      "validation_loss": 0.3283,
+      "components": {
+        "lexicon_fraction": 0.7,
+        "use_phrase_hints": true,
+        "use_negation": false,
+        "use_intensifiers": false,
+        "use_short_text_bias": true,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 5",
+      "train_loss": 0.0958,
+      "validation_loss": 0.3028,
+      "components": {
+        "lexicon_fraction": 0.82,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": false,
+        "use_short_text_bias": true,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 6",
+      "train_loss": 0.0915,
+      "validation_loss": 0.2771,
+      "components": {
+        "lexicon_fraction": 0.9,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": true,
+        "use_short_text_bias": true,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 7",
+      "train_loss": 0.0915,
+      "validation_loss": 0.2576,
+      "components": {
+        "lexicon_fraction": 1.0,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": true,
+        "use_short_text_bias": true,
+        "use_contrast_cue": false
+      }
+    },
+    {
+      "stage": "Epoch 8",
+      "train_loss": 0.0915,
+      "validation_loss": 0.258,
+      "components": {
+        "lexicon_fraction": 1.0,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": true,
+        "use_short_text_bias": true,
+        "use_contrast_cue": true
+      }
+    },
+    {
+      "stage": "Epoch 9",
+      "train_loss": 0.0915,
+      "validation_loss": 0.258,
+      "components": {
+        "lexicon_fraction": 1.0,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": true,
+        "use_short_text_bias": true,
+        "use_contrast_cue": true
+      }
+    },
+    {
+      "stage": "Epoch 10",
+      "train_loss": 0.0915,
+      "validation_loss": 0.258,
+      "components": {
+        "lexicon_fraction": 1.0,
+        "use_phrase_hints": true,
+        "use_negation": true,
+        "use_intensifiers": true,
+        "use_short_text_bias": true,
+        "use_contrast_cue": true
+      }
+    }
+  ],
+  "f1_scores": {
+    "joy": 0.8889,
+    "sadness": 0.8889,
+    "anger": 0.9412,
+    "fear": 0.8889,
+    "love": 0.8889,
+    "surprise": 0.9474
+  },
+  "normalized_confusion_matrix": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.8,
+      0.0,
+      0.1,
+      0.1,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.8889,
+      0.0,
+      0.0,
+      0.1111
+    ],
+    [
+      0.1111,
+      0.0,
+      0.0,
+      0.8889,
+      0.0,
+      0.0
+    ],
+    [
+      0.1111,
+      0.0,
+      0.0,
+      0.0,
+      0.8889,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "threshold_sweep": [
+    {
+      "threshold": 0.3,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.35,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.39999999999999997,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.44999999999999996,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.49999999999999994,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.5499999999999999,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.5999999999999999,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.6499999999999999,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.7,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    },
+    {
+      "threshold": 0.7499999999999999,
+      "macro_precision": 1.0,
+      "macro_recall": 0.8576,
+      "macro_f1": 0.9217,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8571,
+      "micro_f1": 0.9231,
+      "subset_accuracy": 0.8889,
+      "hamming_loss": 0.0278,
+      "per_label": {
+        "joy": {
+          "precision": 1.0,
+          "recall": 0.9091,
+          "f1": 0.9524,
+          "support": 11,
+          "tp": 10,
+          "fp": 0,
+          "fn": 1,
+          "tn": 43
+        },
+        "sadness": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889,
+          "support": 10,
+          "tp": 8,
+          "fp": 0,
+          "fn": 2,
+          "tn": 44
+        },
+        "fear": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "love": {
+          "precision": 1.0,
+          "recall": 0.8182,
+          "f1": 0.9,
+          "support": 11,
+          "tp": 9,
+          "fp": 0,
+          "fn": 2,
+          "tn": 43
+        },
+        "surprise": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 10,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 44
+        }
+      }
+    }
+  ],
+  "selected_threshold_metrics": {
+    "threshold": 0.3,
+    "macro_precision": 1.0,
+    "macro_recall": 0.8576,
+    "macro_f1": 0.9217,
+    "micro_precision": 1.0,
+    "micro_recall": 0.8571,
+    "micro_f1": 0.9231,
+    "subset_accuracy": 0.8889,
+    "hamming_loss": 0.0278,
+    "per_label": {
+      "joy": {
+        "precision": 1.0,
+        "recall": 0.9091,
+        "f1": 0.9524,
+        "support": 11,
+        "tp": 10,
+        "fp": 0,
+        "fn": 1,
+        "tn": 43
+      },
+      "sadness": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.8889,
+        "support": 10,
+        "tp": 8,
+        "fp": 0,
+        "fn": 2,
+        "tn": 44
+      },
+      "anger": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.8889,
+        "support": 10,
+        "tp": 8,
+        "fp": 0,
+        "fn": 2,
+        "tn": 44
+      },
+      "fear": {
+        "precision": 1.0,
+        "recall": 0.8182,
+        "f1": 0.9,
+        "support": 11,
+        "tp": 9,
+        "fp": 0,
+        "fn": 2,
+        "tn": 43
+      },
+      "love": {
+        "precision": 1.0,
+        "recall": 0.8182,
+        "f1": 0.9,
+        "support": 11,
+        "tp": 9,
+        "fp": 0,
+        "fn": 2,
+        "tn": 43
+      },
+      "surprise": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 10,
+        "tp": 10,
+        "fp": 0,
+        "fn": 0,
+        "tn": 44
+      }
+    }
+  }
+}
