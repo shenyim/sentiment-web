@@ -61,7 +61,13 @@ if Flask:
 
     @app.route("/health")
     def health():
-        return jsonify({"status": "ok", "model": "offline-lexicon-analyzer"})
+        return jsonify(
+            {
+                "status": "ok",
+                "model": getattr(analyzer, "model_name", "offline-lexicon-analyzer"),
+                "model_type": getattr(analyzer, "model_type", "heuristic"),
+            }
+        )
 
     @app.route("/predict", methods=["POST", "OPTIONS"])
     def predict():
@@ -93,7 +99,13 @@ class OfflineHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         if parsed.path == "/health":
-            body = json.dumps({"status": "ok", "model": "offline-lexicon-analyzer"}).encode("utf-8")
+            body = json.dumps(
+                {
+                    "status": "ok",
+                    "model": getattr(analyzer, "model_name", "offline-lexicon-analyzer"),
+                    "model_type": getattr(analyzer, "model_type", "heuristic"),
+                }
+            ).encode("utf-8")
             self._send(body, 200, "application/json; charset=utf-8")
             return
         requested = "index.html" if parsed.path in {"/", ""} else parsed.path

@@ -1,0 +1,49 @@
+{
+  "target_labels": ["joy", "sadness", "anger", "fear", "love", "surprise", "neutral"],
+  "multi_label_threshold": 0.18,
+  "source_mappings": {
+    "goemotions": {
+      "admiration": "love",
+      "amusement": "joy",
+      "anger": "anger",
+      "annoyance": "anger",
+      "approval": "joy",
+      "caring": "love",
+      "confusion": "surprise",
+      "curiosity": "surprise",
+      "desire": "love",
+      "disappointment": "sadness",
+      "disapproval": "anger",
+      "disgust": "anger",
+      "embarrassment": "sadness",
+      "excitement": "joy",
+      "fear": "fear",
+      "gratitude": "joy",
+      "grief": "sadness",
+      "joy": "joy",
+      "love": "love",
+      "nervousness": "fear",
+      "optimism": "joy",
+      "pride": "joy",
+      "realization": "surprise",
+      "relief": "joy",
+      "remorse": "sadness",
+      "sadness": "sadness",
+      "surprise": "surprise",
+      "neutral": "neutral"
+    },
+    "emotion_dataset": {
+      "joy": "joy",
+      "sadness": "sadness",
+      "anger": "anger",
+      "fear": "fear",
+      "love": "love",
+      "surprise": "surprise"
+    }
+  },
+  "notes": [
+    "The thesis-facing label space uses six affective classes plus neutral fallback.",
+    "The mapping is intentionally conservative so dataset-specific fine-grained labels do not imply clinical states.",
+    "Rows with no mapped labels should be reviewed manually or assigned neutral only when the source label is explicitly neutral."
+  ]
+}

@@ -1366,6 +1366,11 @@
               <div class="insight-title">Detected keywords</div>
               <div class="keyword-list" id="keywordList"></div>
             </div>
+            <div class="insight-box">
+              <div class="insight-title">Multi-label emotions</div>
+              <div class="keyword-list" id="activeLabelList"></div>
+              <div class="insight-text" id="activeLabelNote">Labels above the active threshold appear here.</div>
+            </div>
           </div>
 
           <div class="section-block">
@@ -1562,6 +1567,8 @@
       entryProfile: document.getElementById("entryProfile"),
       entryProfileText: document.getElementById("entryProfileText"),
       keywordList: document.getElementById("keywordList"),
+      activeLabelList: document.getElementById("activeLabelList"),
+      activeLabelNote: document.getElementById("activeLabelNote"),
       probabilityBars: document.getElementById("probabilityBars"),
       sentenceList: document.getElementById("sentenceList"),
       reflectionList: document.getElementById("reflectionList"),
@@ -2138,6 +2145,23 @@
         el.keywordList.innerHTML = '<span class="keyword">No dominant keywords found</span>';
       }
 
+      el.activeLabelList.innerHTML = "";
+      const activeLabels = result.active_labels || [];
+      if (activeLabels.length) {
+        activeLabels.forEach((item) => {
+          const node = document.createElement("span");
+          node.className = "keyword";
+          node.textContent = `${titleCase(item.label)} ${(item.score * 100).toFixed(1)}%`;
+          el.activeLabelList.appendChild(node);
+        });
+      } else {
+        el.activeLabelList.innerHTML = '<span class="keyword">No active labels</span>';
+      }
+      const threshold = result.multi_label_threshold || 0;
+      el.activeLabelNote.textContent = threshold
+        ? `Threshold: ${(threshold * 100).toFixed(0)}%. Multiple labels can be active for one entry.`
+        : "Multiple labels can be active for one entry.";
+
       el.probabilityBars.innerHTML = "";
       (result.probs || []).forEach((item) => {
         const row = document.createElement("div");
@@ -2335,10 +2359,13 @@
         state.history.push({
           text,
           label_name: data.label_name,
+          active_labels: data.active_labels || [],
           score: data.score,
           ehi: data.ehi,
           created_at: new Date().toISOString(),
           probs: data.probs || [],
+          model_name: data.model_name || "local-only",
+          model_type: data.model_type || "heuristic",
         });
         saveHistory();
         renderDashboard();
@@ -2376,6 +2403,9 @@
           </div>
         </div>
       `).join("");
+      const activeLabelText = (result.active_labels || [])
+        .map((item) => `${titleCase(item.label)} ${toPercent(item.score)}`)
+        .join(", ") || titleCase(result.label_name);
 
       const recent = state.history.slice(-6);
       const trendSvg = recent.length
@@ -2409,6 +2439,7 @@
             <div class="export-card">
               <h3>Latest reflection</h3>
               <div class="export-mini">${escapeHtml(result.support_message || "")}</div>
+              <div class="export-mini">Active labels: ${escapeHtml(activeLabelText)}</div>
               <div style="font-size:17px;line-height:1.7;min-height:110px;">${latestText || "No current journal text in input box."}</div>
               <div style="margin-top:18px;">
                 ${probabilityRows}

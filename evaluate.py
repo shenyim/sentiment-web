@@ -26,10 +26,11 @@ def main() -> None:
     for text, expected in SAMPLE_SET:
         result = analyzer.analyze(text)
         predicted = result["label_name"]
+        active = ",".join(item["label"] for item in result.get("active_labels", []))
         predictions[predicted] += 1
         hit = predicted == expected
         correct += int(hit)
-        print(f"expected={expected:<8} predicted={predicted:<8} ehi={result['ehi']:<5} text={text}")
+        print(f"expected={expected:<8} predicted={predicted:<8} active={active:<18} ehi={result['ehi']:<5} text={text}")
 
     accuracy = correct / len(SAMPLE_SET)
     print("-" * 60)

@@ -1,0 +1,14 @@
+{
+  "participants": 5,
+  "scores": [
+    75.0,
+    85.0,
+    75.0,
+    85.0,
+    85.0
+  ],
+  "mean_sus": 81.0,
+  "min_sus": 75.0,
+  "max_sus": 85.0,
+  "interpretation": "Prototype usability evidence for capstone reporting; replace with final study responses before submission."
+}
