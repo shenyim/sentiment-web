@@ -1,0 +1,9 @@
+Reference [6]
+
+J. W. Pennebaker, "Writing About Emotional Experiences as a Therapeutic Process," Psychological Science, vol. 8, no. 3, pp. 162-166, 1997.
+
+Official link:
+https://journals.sagepub.com/doi/10.1111/j.1467-9280.1997.tb00403.x
+
+Download note:
+The SAGE official PDF endpoint returned HTTP 403 from command-line download. Open the official link in a browser, or use university library/VPN access if the PDF is required.

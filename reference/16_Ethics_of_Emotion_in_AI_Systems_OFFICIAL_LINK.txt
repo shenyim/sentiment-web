@@ -1,0 +1,12 @@
+Reference [16]
+
+L. Stark and J. Hoey, "The Ethics of Emotion in Artificial Intelligence Systems," in Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency, 2021, pp. 782-793.
+
+Official link:
+https://dl.acm.org/doi/10.1145/3442188.3445939
+
+DOI:
+10.1145/3442188.3445939
+
+Download note:
+The ACM official PDF endpoint returned HTTP 403 from command-line download. Open the official DOI page in a browser, or use university library/VPN access for the PDF.
