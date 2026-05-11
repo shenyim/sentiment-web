@@ -22,10 +22,14 @@ This project packages the capstone thesis prototype into a self-contained local 
 - `frontend/sw.js`: service worker for offline caching.
 - `evaluate.py`: tiny demo evaluation script.
 - `test_model.py`: unit tests for the analyzer.
+- `generate_figures.py`: generates the thesis-facing prototype figures and evidence files.
 - `data/`: label harmonization documentation and preprocessing notes.
 - `scripts/`: preprocessing, transformer training, and transformer evaluation scripts.
 - `evaluation/`: SUS pilot format, analysis script, and evaluation plan.
 - `models/`: instructions for optional local model artifacts.
+- `figures/`: generated prototype figures and supporting metrics.
+- `docs/`: thesis and SRD poster PDFs.
+- `reference/`: numbered bibliography/reference materials.
 - `privacy_threat_model.md`: privacy and safety risk analysis.
 
 ## How to run
@@ -33,7 +37,8 @@ This project packages the capstone thesis prototype into a self-contained local 
 ### Option 1: no dependencies
 
 ```bash
-cd /Users/sym/Documents/capstone/sentiment_project
+git clone https://github.com/shenyim/sentiment-web.git
+cd sentiment-web
 python3 app.py
 ```
 
@@ -44,7 +49,7 @@ Then open:
 ### Option 2: with Flask
 
 ```bash
-cd /Users/sym/Documents/capstone/sentiment_project
+cd sentiment-web
 python3 -m pip install -r requirements.txt
 python3 app.py
 ```
@@ -52,7 +57,7 @@ python3 app.py
 ## How to test
 
 ```bash
-cd /Users/sym/Documents/capstone/sentiment_project
+cd sentiment-web
 python3 -m unittest test_model.py
 python3 evaluate.py
 ```
@@ -62,7 +67,7 @@ python3 evaluate.py
 The submitted demo uses the offline lexicon analyzer so it runs without downloads. If you need the code to match the DistilBERT/RoBERTa wording in the thesis more directly, install the optional dependencies and train or place a local HuggingFace-compatible model:
 
 ```bash
-cd /Users/sym/Documents/capstone/sentiment_project
+cd sentiment-web
 python3 -m pip install -r requirements-transformer.txt
 python3 scripts/preprocess.py --input data/raw/goemotions.csv --source goemotions --output data/processed_goemotions.jsonl
 python3 scripts/train_transformer.py --train data/train.jsonl --validation data/validation.jsonl --output-dir models/distilbert-emotion
@@ -84,7 +89,7 @@ The API response format stays stable across analyzers, including `probs`, `activ
 Install dependencies first:
 
 ```bash
-cd /Users/sym/Documents/capstone/sentiment_project
+cd sentiment-web
 python3 -m pip install -r requirements.txt
 ```
 
@@ -94,7 +99,7 @@ Then run:
 python3 generate_figures.py
 ```
 
-This will generate three PNG files in `/Users/sym/Documents/capstone/sentiment_project/figures`:
+This will generate or refresh three PNG files in `figures/`:
 
 - `figure_4_1_f1_radar.png`
 - `figure_4_2_loss_curve.png`
