@@ -1,30 +1,29 @@
 # Reference Download Status
 
-Downloaded into this folder on 2026-05-11.
+Updated on 2026-05-12.
 
-## PDF Files Downloaded
+This folder now contains numbered reference files for all 19 bibliography items. Each item has a corresponding PDF file named with its reference number.
 
-- [1] Attention Is All You Need
-- [2] BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
-- [3] RoBERTa: A Robustly Optimized BERT Pretraining Approach
-- [4] DistilBERT, a Distilled Version of BERT
-- [5] Obtaining Reliable Human Ratings of Valence, Arousal, and Dominance
-- [10] GoEmotions: A Dataset of Fine-Grained Emotions
-- [11] EmoBank
-- [12] DailyDialog
-- [13] Natural Language Processing in Mental Health Applications Using Non-clinical Texts
-- [14] A Survey of State-of-the-Art Approaches for Emotion Recognition in Text
-- [15] An Analysis of Annotated Corpora for Emotion Classification in Text
+## PDF Files
 
-## Official Links Saved Because Direct PDF Download Was Blocked Or Not Applicable
+- [1] `01_Attention_Is_All_You_Need.pdf`
+- [2] `02_BERT_Pretraining_of_Deep_Bidirectional_Transformers.pdf`
+- [3] `03_RoBERTa_A_Robustly_Optimized_BERT_Pretraining_Approach.pdf`
+- [4] `04_DistilBERT_A_Distilled_Version_of_BERT.pdf`
+- [5] `05_Obtaining_Reliable_Human_Ratings_of_VAD.pdf`
+- [6] `06_pennebaker-1997-writing-about-emotional-experiences-as-a-therapeutic-process.pdf`
+- [7] `07_Human_Centered_AI_OUP.pdf`
+- [8] `08_Edge_Intelligence_Secure_Frameworks.pdf`
+- [9] `09_Disclosing_Edge_Intelligence_A_Systematic_Meta_Survey.pdf`
+- [10] `10_GoEmotions_A_Dataset_of_Fine_Grained_Emotions.pdf`
+- [11] `11_EmoBank_Dimensional_Emotion_Analysis.pdf`
+- [12] `12_DailyDialog_Multi_turn_Dialogue_Dataset.pdf`
+- [13] `13_NLP_in_Mental_Health_Applications_Using_Nonclinical_Texts.pdf`
+- [14] `14_Survey_State_of_the_Art_Emotion_Recognition_in_Text.pdf`
+- [15] `15_Analysis_of_Annotated_Corpora_for_Emotion_Classification.pdf`
+- [16] `16_Ethics_of_Emotion_in_AI_Systems.pdf`
+- [17] `17_Efficient_Transformers_A_Survey.pdf`
+- [18] `18_Practical_Survey_on_Faster_and_Lighter_Transformers.pdf`
+- [19] `19_SUS_A_Quick_and_Dirty_Usability_Scale_Taylor.pdf`
 
-- [6] SAGE article page saved as an official-link note; command-line PDF returned HTTP 403.
-- [7] Oxford University Press book page saved as an official-link note; this is a book, not an open PDF.
-- [8] ScienceDirect article page saved as an official-link note; command-line access returned HTTP 403.
-- [9] MDPI official article link saved as an official-link note; command-line PDF returned HTTP 403 in this environment.
-- [16] ACM DOI page saved as an official-link note; command-line PDF returned HTTP 403.
-- [17] ACM DOI page saved as an official-link note; command-line PDF returned HTTP 403.
-- [18] ACM DOI page saved as an official-link note; command-line PDF returned HTTP 403.
-- [19] Taylor & Francis official chapter page downloaded as HTML.
-
-For blocked publisher sites, open the official link in a browser and use university library/VPN access if the full PDF is needed.
+Note: Some publisher PDFs may be short front-matter, preview, or access-page exports depending on publisher permissions. Use the original bibliography URLs for final citation verification if a full publisher copy is required.
